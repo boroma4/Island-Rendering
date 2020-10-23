@@ -1,5 +1,9 @@
+#define GLEW_STATIC
+
 #include <iostream>
-#include <GLFW/glfw3.h>
+#include <GLEW/glew.h>      // OpenGL Extension Wrangler 
+#include <GLFW/glfw3.h>     // Windows and input
+#include <glm/glm.hpp>      // OpenGL math library
 
 int main(void)
 {
@@ -16,6 +20,12 @@ int main(void)
         glfwTerminate();
         return -1;
     }
+
+	glewExperimental = GL_TRUE;
+    glewInit();
+	
+	std::cout << glm::vec3(3.0f, 1.0f, 2.0f).y << std::endl;
+
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
