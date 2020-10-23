@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Island Rendering", "Island Rendering\Island Rendering.vcxproj", "{E44F295F-6285-4CB8-934A-91320D1A593C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Debug|x64.ActiveCfg = Debug|x64
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Debug|x64.Build.0 = Debug|x64
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Debug|x86.ActiveCfg = Debug|Win32
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Debug|x86.Build.0 = Debug|Win32
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Release|x64.ActiveCfg = Release|x64
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Release|x64.Build.0 = Release|x64
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Release|x86.ActiveCfg = Release|Win32
+		{E44F295F-6285-4CB8-934A-91320D1A593C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {828D98B0-F284-4D71-A6FD-12A2A836A4DA}
+	EndGlobalSection
+EndGlobal
