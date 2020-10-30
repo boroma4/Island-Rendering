@@ -6,8 +6,8 @@
 #include <GLEW/glew.h>      // OpenGL Extension Wrangler -
 #include <GLFW/glfw3.h>     // Windows and input
 #include <glm/glm.hpp>      // OpenGL math library
-#include <iostream>
-#include <stack>
+#include <iostream>         // Input and Output
+#include <stack>            // Stack
 
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
