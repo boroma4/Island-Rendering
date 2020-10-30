@@ -152,6 +152,12 @@ void shader_prog::uniformVec3(const char* name, glm::vec3 v) {
     if (loc < 0) printf("WARNING: Location not found in shader program for variable %s.\n", name);
     glUniform3fv(loc, 1, glm::value_ptr(v));
 }
+void shader_prog::uniformVec4(const char* name, glm::vec4 v)
+{
+	GLint loc = glGetUniformLocation(prog, name);
+    if (loc < 0) printf("WARNING: Location not found in shader program for variable %s.\n", name);
+    glUniform4fv(loc, 1, glm::value_ptr(v));
+}
 void shader_prog::uniformTex2D(const char* name, GLuint texturePointer) {
     GLint loc = glGetUniformLocation(prog, name);
     if (loc < 0) printf("WARNING: Location not found in shader program for variable %s.\n", name);

@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>     // Windows and input
 #include <glm/glm.hpp>      // OpenGL math library
 #include <iostream>
+#include <stack>
+
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
@@ -38,7 +40,7 @@ extern "C"
 }
 
 water_entity water; // water object
-GLuint seafloor_vao; // just for testing
+GLuint seafloor_vao, sky_vao; // just for testing
 
 // --- Load the shaders declared in glsl files in the project folder ---//
 shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
@@ -54,19 +56,30 @@ void init_scene() {
 	// a nice tool for colors https://doc.instantreality.org/tools/color_calculator/
 	water.init(&water_shader);
 	seafloor_vao =  create_quad(glm::vec3(0.678, 0.674, 0.121), &default_shader);
+	sky_vao = create_quad(glm::vec3(1, 1, 1), &default_shader);
 }
 
-// TODO: Add draw scene method when there are more entities
-
-void draw_floor(shader_prog* shader) {
+//basic stuff for testing
+void draw_scene(shader_prog* shader) {
     shader->activate();
+    std::stack<glm::mat4> ms;
+	ms.push(glm::mat4(1.0));
 
-	auto floor = glm::mat4(1.0);
-	floor = glm::scale(floor, glm::vec3(20.0, 1.0, 30.0));
-    floor = glm::rotate(floor, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
-    shader->uniformMatrix4fv("modelMatrix", floor);
-    glBindVertexArray(seafloor_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+	ms.push(ms.top());
+		ms.top() = glm::scale(ms.top(), glm::vec3(20.0, 1.0, 30.0));
+	    ms.top() = glm::rotate(ms.top(), glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+	    shader->uniformMatrix4fv("modelMatrix", ms.top());
+	    glBindVertexArray(seafloor_vao);
+	    glDrawArrays(GL_TRIANGLES, 0, 6);
+	ms.pop();
+	ms.push(ms.top());
+		ms.top() = glm::translate(ms.top(), glm::vec3(0.0, WATER_LEVEL + 5, 0.0));
+		ms.top() = glm::scale(ms.top(), glm::vec3(1.0, 1.0, 30.0));
+	    ms.top() = glm::rotate(ms.top(), glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+	    shader->uniformMatrix4fv("modelMatrix", ms.top());
+	    glBindVertexArray(sky_vao);
+	    glDrawArrays(GL_TRIANGLES, 0, 6);
+	ms.pop();
 }
 
 // ---------------------------- Main -------------------------- //
@@ -104,7 +117,7 @@ int main(int argc, char *argv[]) {
     float near = 1.0f;
     float far = 200.0f;
 
-    glm::vec3 viewer = glm::vec3(10.0, 10.0, 30.0);
+    glm::vec3 viewer = glm::vec3(10.0, 15.0, 30.0);
     glm::mat4 perspective = glm::perspective(glm::radians(80.0f), static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT, near, far);
     glm::mat4 view = glm::lookAt(
         viewer, //Position
@@ -129,13 +142,34 @@ int main(int argc, char *argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
 	statistics.prev_time = glfwGetTime();
 
+
     while (!glfwWindowShouldClose(win)) {
+    	
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        draw_floor(&default_shader);
+    	/*
+    	 * 1) Enable clipping
+    	 * 2) Save clipped land and sky to reflection and refraction buffers
+    	 * 3) Disable clipping and draw the scene
+    	 */
+		glEnable(GL_CLIP_DISTANCE0);
+        default_shader.activate();
+    	// draw everything aside the water into reflection buffer
+    	default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL)); // leave everything above water
+    	water.bind_reflection_buffer();
+        draw_scene(&default_shader);
+
+		// draw everything aside the water into refraction buffer
+    	water.bind_refraction_buffer();
+		default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything below water
+        draw_scene(&default_shader);
+
+    	// draw scene normally, reflection and refraction buffers will be used for water calculations
+    	water.unbind_current_buffer(); // to enable drawing on the screen
+		glDisable(GL_CLIP_DISTANCE0);
+    	draw_scene(&default_shader);
     	water.draw();
 
         glfwSwapBuffers(win);

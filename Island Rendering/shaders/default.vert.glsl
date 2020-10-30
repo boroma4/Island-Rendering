@@ -3,6 +3,7 @@
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform vec4 clippingPlane;
 uniform vec3 lightPosition;
 
 layout(location = 0) in vec3 position;
@@ -14,9 +15,13 @@ out vec3 interpolatedPosition;
 out vec3 interpolatedColor;
 
 void main(void) {
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0); // should be correct
     mat4 modelViewMatrix = viewMatrix * modelMatrix;
     mat3 normalMatrix = transpose(inverse(mat3(modelViewMatrix)));
 
+    float clipDist = dot(worldPosition, clippingPlane);
+
+    gl_ClipDistance[0] = clipDist; // to disable drawing of some vertices if clipping is enabled (needed for water)
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
     interpolatedNormal = normalize(normalMatrix * normal);

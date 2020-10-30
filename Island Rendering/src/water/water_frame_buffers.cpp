@@ -34,18 +34,18 @@ void water_frame_buffers::bind_refraction_fbo()
 
 void water_frame_buffers::init_refraction_fbo()
 {
-		refraction_frame_buffer = create_fbo();
-		refraction_texture = create_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
-		refraction_depth_texture = create_depth_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
-		unbind_current_fbo();
+	refraction_frame_buffer = create_fbo();
+	refraction_texture = create_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
+	refraction_depth_texture = create_depth_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
+	unbind_current_fbo();
 }
 
 void water_frame_buffers::init_reflection_fbo()
 {
-	    reflection_frame_buffer = create_fbo();
-		reflection_texture = create_texture_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-		reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-		unbind_current_fbo();
+	reflection_frame_buffer = create_fbo();
+	reflection_texture = create_texture_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+	reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+	unbind_current_fbo();
 }
 
 void water_frame_buffers::bind_fbo(const GLuint buffer, const int w, const int h)

@@ -38,6 +38,7 @@ public:
     void uniformMatrix4fv(const char* name, glm::mat4 matrix);
     void uniformVec2(const char* name, glm::vec2 v);
     void uniformVec3(const char* name, glm::vec3 v);
+	void uniformVec4(const char* name, glm::vec4 v);
     void uniformTex2D(const char* name, GLuint texturePointer);
     void attribute3fv(const char* name, GLfloat* vecArray, int numberOfVertices);
     GLuint attributeVectorVec3(const char* name, std::vector<glm::vec3> vectorVec3);
