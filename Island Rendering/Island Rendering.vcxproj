@@ -157,7 +157,42 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\water\water_entity.cpp" />
+    <ClCompile Include="src\water\water_frame_buffers.cpp" />
+    <Text Include="shaders\default.frag.glsl">
+      <FileType>Text</FileType>
+    </Text>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\utils\geometry.cpp" />
+    <ClCompile Include="src\utils\shader_util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Settings.h" />
+    <ClInclude Include="src\utils\geometry.h" />
+    <ClInclude Include="src\utils\shader_util.h" />
+    <ClInclude Include="src\water\water_entity.h" />
+    <ClInclude Include="src\water\water_frame_buffers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shaders\default.vert.glsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <FileType>Text</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\water.frag.glsl">
+      <FileType>Text</FileType>
+    </None>
+    <None Include="shaders\water.vert.glsl">
+      <FileType>Text</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
