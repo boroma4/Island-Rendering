@@ -6,6 +6,8 @@ in vec3 interpolatedColor;
 in vec3 interpolatedNormal;
 in vec3 interpolatedPosition;
 
+out vec4 frag_color;
+
 void main(void) {
 
     float gamma = 2.2;
@@ -17,5 +19,5 @@ void main(void) {
     vec3 color = pow(interpolatedColor, vec3(gamma)) * (0.1 + max(0.0, dot(n, l))) + pow(max(0.0, dot(h, n)), 1000);
     color = pow(color, vec3(1.0 / gamma));
 
-    gl_FragColor = vec4(color, 1.0);
+    frag_color = vec4(color, 1.0);
 }

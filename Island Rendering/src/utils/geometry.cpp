@@ -1,7 +1,5 @@
 ﻿#include "geometry.h"
 
-
-
 /**
  * This function creates a colored quad.
  * These quads have a position, color and normal for each vertex.
@@ -18,13 +16,13 @@ GLuint create_quad(glm::vec3 color, shader_prog* shader) {
     float s = 10.0;
 
     GLfloat vertexData[] = {
-        //  X     Y     Z   Color   Normal
-        -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+        //  X Y  Z              Color                 Normal      
+        -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
          s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f
     };
 
     glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
@@ -49,6 +47,55 @@ GLuint create_quad(glm::vec3 color, shader_prog* shader) {
 
     return vertexArrayHandle;
 }
+
+GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
+    GLuint vertexArrayHandle;
+    GLuint arrayBufferHandle;
+
+    glGenVertexArrays(1, &vertexArrayHandle);
+    glBindVertexArray(vertexArrayHandle);
+    glGenBuffers(1, &arrayBufferHandle);
+
+    float s = 10.0;
+
+    GLfloat vertexData[] = {
+        //  X Y  Z              Color                 Normal         U    V
+        -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+         s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
+    GLuint loc = glGetAttribLocation(shader->getProg(), "position");
+    if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (const GLvoid*)(0*sizeof(float)));
+
+    loc = glGetAttribLocation(shader->getProg(), "color");
+    if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "color"));
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (const GLvoid*)(3*sizeof(float)));
+
+    loc = glGetAttribLocation(shader->getProg(), "normal");
+    if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "normal"));
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (const GLvoid*)(6*sizeof(float)));
+
+	loc = glGetAttribLocation(shader->getProg(), "uv");
+    if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "normal"));
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 11*sizeof(float), (const GLvoid*)(9*sizeof(float)));
+
+    glBindVertexArray(0);
+
+    return vertexArrayHandle;
+}
+
 
 /**
  * This function will create the sphere geometry.

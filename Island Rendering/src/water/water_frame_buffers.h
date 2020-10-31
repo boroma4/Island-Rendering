@@ -25,8 +25,8 @@ private:
 	const int REFLECTION_WIDTH = 320;
 	const int REFLECTION_HEIGHT = 180;
 	
-	const int REFRACTION_WIDTH = 1280;
-	const int REFRACTION_HEIGHT = 720;
+	const int REFRACTION_WIDTH = 320;
+	const int REFRACTION_HEIGHT = 180;
 
 private:
 	void init_refraction_fbo();

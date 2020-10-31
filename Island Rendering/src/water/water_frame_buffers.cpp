@@ -1,5 +1,7 @@
 ﻿#include "water_frame_buffers.h"
 
+#include <iostream>
+
 water_frame_buffers::water_frame_buffers()
 {
 	init_reflection_fbo();
@@ -36,7 +38,10 @@ void water_frame_buffers::init_refraction_fbo()
 {
 	refraction_frame_buffer = create_fbo();
 	refraction_texture = create_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
-	refraction_depth_texture = create_depth_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
+	//refraction_depth_texture = create_depth_texture_attachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Something went wrong, when generating the depth render target!" << std::endl;
+    }
 	unbind_current_fbo();
 }
 
@@ -44,7 +49,7 @@ void water_frame_buffers::init_reflection_fbo()
 {
 	reflection_frame_buffer = create_fbo();
 	reflection_texture = create_texture_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-	reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+	//reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
 	unbind_current_fbo();
 }
 
@@ -60,7 +65,8 @@ GLuint water_frame_buffers::create_fbo()
 	GLuint buf;
 	glGenFramebuffers(1, &buf);
     glBindFramebuffer(GL_FRAMEBUFFER, buf);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	GLenum draw_buffers[1] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, draw_buffers); // "1" is the size of DrawBuffers
 	
 	return buf;
 }
@@ -69,7 +75,7 @@ GLuint water_frame_buffers::create_texture_attachment(const int w, const int h)
 {
 	GLuint tex;
     glGenTextures(1, &tex);
-	glActiveTexture(GL_TEXTURE5);
+	//glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, tex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -83,7 +89,7 @@ GLuint water_frame_buffers::create_depth_texture_attachment(const int w, const i
 {
 	GLuint tex;
     glGenTextures(1, &tex);
-	glActiveTexture(GL_TEXTURE5);
+	//glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, tex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
