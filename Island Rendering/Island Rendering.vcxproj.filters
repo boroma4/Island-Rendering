@@ -30,6 +30,9 @@
     <ClCompile Include="src\water\water_frame_buffers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\texture_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\water\water_entity.h">
@@ -47,6 +50,12 @@
     <ClInclude Include="src\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\texture_util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\default.frag.glsl">
@@ -57,5 +66,10 @@
   <ItemGroup>
     <None Include="shaders\water.frag.glsl" />
     <None Include="shaders\water.vert.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\waterDUDV.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
