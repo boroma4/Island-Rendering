@@ -17,6 +17,7 @@ out vec3 interpolatedNormal;
 out vec2 interpolatedUv;
 
 void main(void) {
+    // probably would be better to send as uniform
     mat4 modelViewMatrix = viewMatrix * modelMatrix;
     mat3 normalMatrix = transpose(inverse(mat3(modelViewMatrix)));
 

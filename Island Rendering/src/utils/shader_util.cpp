@@ -161,10 +161,23 @@ void shader_prog::uniformVec4(const char* name, glm::vec4 v)
 void shader_prog::uniformTex2D(const char* name, GLuint texturePointer) {
     GLint loc = glGetUniformLocation(prog, name);
     if (loc < 0) printf("WARNING: Location not found in shader program for variable %s.\n", name);
-    glUniform1i(loc, textureCounter);
-    glActiveTexture(GL_TEXTURE0 + textureCounter);
-    glBindTexture(GL_TEXTURE_2D, texturePointer);
-    textureCounter++;
+	
+	// if a texture was passed before, it's number can be remembered
+	auto texName = std::string(name);
+	if (texture_map.find(texName) != texture_map.end())
+	{
+		//glUniform1i(loc, texture_map[texName]);
+		glActiveTexture(texture_map[texName]);
+		glBindTexture(GL_TEXTURE_2D, texturePointer);
+	}
+    else
+    {
+		glUniform1i(loc, textureCounter);
+		glActiveTexture(GL_TEXTURE0 + textureCounter);
+		glBindTexture(GL_TEXTURE_2D, texturePointer);
+    	texture_map[texName] = textureCounter;
+		textureCounter++;
+    }
 }
 
 void shader_prog::attribute3fv(const char* name, GLfloat* vecArray, int numberOfVertices) {

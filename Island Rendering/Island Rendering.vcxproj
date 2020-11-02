@@ -175,10 +175,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Settings.h" />
-    <ClInclude Include="src\utils\camera.h" />
     <ClInclude Include="src\utils\geometry.h" />
     <ClInclude Include="src\utils\shader_util.h" />
     <ClInclude Include="src\utils\texture_util.h" />
+    <ClInclude Include="src\utils\entity_transform.h" />
     <ClInclude Include="src\water\water_entity.h" />
     <ClInclude Include="src\water\water_frame_buffers.h" />
   </ItemGroup>

@@ -1,10 +1,11 @@
 #version 400
 
-uniform vec3 lightPosition;
+uniform vec3 lightDirection;
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D dudvTexture;
 uniform float moveFactor;
+uniform float waveStrength;
 
 in vec3 interpolatedPosition;
 in vec3 interpolatedColor;
@@ -13,8 +14,6 @@ in vec2 interpolatedUv;
 in vec4 clipSpace;
 
 out vec4 color;
-
-const float waveStrength = 0.1;
 
 void main(void) {
 
@@ -39,7 +38,7 @@ void main(void) {
     float gamma = 2.2;
     vec3 viewerPosition = vec3(0.0);
     vec3 n = normalize(interpolatedNormal);
-    vec3 l = normalize(lightPosition - interpolatedPosition);
+    vec3 l = normalize(-lightDirection);
     vec3 v = normalize(-interpolatedPosition);
     vec3 h = normalize(l + v);
     vec4 mixedColor = mix(mix(reflectionCol, refractionCol, 0.5), vec4(interpolatedColor, 1.0), 0.3);

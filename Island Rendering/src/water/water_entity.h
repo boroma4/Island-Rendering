@@ -5,9 +5,13 @@
 #include "../utils/shader_util.h"
 #include "../Settings.h"
 #include "../utils/texture_util.h"
+#include "../utils/entity_transform.h"
 
 class water_entity
 {
+
+public:
+	entity_transform* transform;
 	
 public:
 	~water_entity();
@@ -23,5 +27,6 @@ private:
 	shader_prog* shader;
 	water_frame_buffers* frame_buffers;
 	const float WAVE_SPEED = 0.03f;
+	float wave_strength = 0.1f;
 	float move_factor = 0;
 };

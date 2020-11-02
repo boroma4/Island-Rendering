@@ -15,6 +15,7 @@ out vec3 interpolatedPosition;
 out vec3 interpolatedColor;
 
 void main(void) {
+    // probably would be better to send as uniform
     vec4 worldPosition = modelMatrix * vec4(position, 1.0); // should be correct
     mat4 modelViewMatrix = viewMatrix * modelMatrix;
     mat3 normalMatrix = transpose(inverse(mat3(modelViewMatrix)));

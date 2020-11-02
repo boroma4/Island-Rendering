@@ -12,6 +12,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <unordered_map>
 
 /**
  * Modified version of code from:
@@ -22,7 +23,8 @@ class shader_prog {
 private:
     GLuint vertex_shader, fragment_shader, prog;
     std::string v_source, f_source;
-    int textureCounter = 0;
+	std::unordered_map<std::string, GLuint> texture_map;
+	int textureCounter;
 public:
     shader_prog(const char* vertex_shader_filename, const char* fragment_shader_filename);
     void use();

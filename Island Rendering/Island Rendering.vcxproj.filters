@@ -53,7 +53,7 @@
     <ClInclude Include="src\utils\texture_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\camera.h">
+    <ClInclude Include="src\utils\entity_transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

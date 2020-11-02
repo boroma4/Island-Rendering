@@ -12,7 +12,6 @@
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
-#include "utils/camera.h"
 
 
 struct app_stats
@@ -42,12 +41,14 @@ extern "C"
   __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 }
 
-water_entity water; // water object
 GLuint seafloor_vao, sky_vao; // just for testing
 
 // --- Load the shaders declared in glsl files in the project folder ---//
 shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
 shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
+
+// water object
+water_entity water; 
 
 // for window title
 std::string app_name = "Island Rendering";
@@ -130,19 +131,19 @@ int main(int argc, char *argv[]) {
         glm::vec3(0.0, 1.0, 0.0)   //Up
     );
 	
-	// just fix the light for now
-	glm::vec3 lightPosition(0.0, WATER_LEVEL + 3, 0.0);
+	// if the sun is infinitely far
+	glm::vec3 lightDirection (-0.0f, -1.0f, -0.0f);
 	
     //Send the view and projection matrices to all shaders.
     default_shader.activate();
     default_shader.uniformMatrix4fv("projectionMatrix", perspective);
     default_shader.uniformMatrix4fv("viewMatrix", view);
-    default_shader.uniformVec3("lightPosition", glm::vec3(view * glm::vec4(lightPosition, 1.0)));
+    default_shader.uniformVec3("lightDirection", lightDirection);
 
 	water_shader.activate();
     water_shader.uniformMatrix4fv("projectionMatrix", perspective);
     water_shader.uniformMatrix4fv("viewMatrix", view);
-    water_shader.uniformVec3("lightPosition", glm::vec3(view * glm::vec4(lightPosition, 1.0)));
+    water_shader.uniformVec3("lightDirection", lightDirection);
 
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
