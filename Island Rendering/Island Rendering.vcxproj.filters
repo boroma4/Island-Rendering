@@ -33,6 +33,15 @@
     <ClCompile Include="src\utils\texture_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\island\island_entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\island\perlin_noise.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\island\perlin_noise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\water\water_entity.h">
@@ -56,6 +65,9 @@
     <ClInclude Include="src\utils\entity_transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\island\island_entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\default.frag.glsl">
@@ -66,6 +78,8 @@
   <ItemGroup>
     <None Include="shaders\water.frag.glsl" />
     <None Include="shaders\water.vert.glsl" />
+    <None Include="shaders\island.frag.glsl" />
+    <None Include="shaders\island.vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\waterDUDV.png">

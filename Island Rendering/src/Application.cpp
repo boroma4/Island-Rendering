@@ -12,6 +12,7 @@
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
+#include "./island/island_entity.h"
 
 
 struct app_stats
@@ -46,9 +47,11 @@ GLuint seafloor_vao, sky_vao; // just for testing
 // --- Load the shaders declared in glsl files in the project folder ---//
 shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
 shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
+shader_prog island_shader("shaders/island.vert.glsl", "shaders/island.frag.glsl");
 
 // water object
-water_entity water; 
+water_entity water;
+island_entity island;
 
 // for window title
 std::string app_name = "Island Rendering";
@@ -58,7 +61,8 @@ app_stats statistics;
 
 void init_scene() {
 	// a nice tool for colors https://doc.instantreality.org/tools/color_calculator/
-	water.init(&water_shader);
+    water.init(&water_shader);
+    island.init(&island_shader);
 	seafloor_vao =  create_quad(glm::vec3(0.678, 0.674, 0.121), &default_shader);
 	sky_vao = create_quad(glm::vec3(1, 0, 0), &default_shader);
 }
@@ -115,7 +119,8 @@ int main(int argc, char *argv[]) {
 	
 	// compile
     default_shader.use();
-	water_shader.use();
+    water_shader.use();
+    island_shader.use();
 
     //We initialize our stuff
     init_scene();
@@ -140,10 +145,15 @@ int main(int argc, char *argv[]) {
     default_shader.uniformMatrix4fv("viewMatrix", view);
     default_shader.uniformVec3("lightDirection", lightDirection);
 
-	water_shader.activate();
+    water_shader.activate();
     water_shader.uniformMatrix4fv("projectionMatrix", perspective);
     water_shader.uniformMatrix4fv("viewMatrix", view);
-    water_shader.uniformVec3("lightDirection", lightDirection);
+    water_shader.uniformVec3("lightDirection", lightDirection);	
+    
+    island_shader.activate();
+    island_shader.uniformMatrix4fv("projectionMatrix", perspective);
+    island_shader.uniformMatrix4fv("viewMatrix", view);
+    island_shader.uniformVec3("lightDirection", lightDirection);
 
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
@@ -180,6 +190,8 @@ int main(int argc, char *argv[]) {
 
     	// finally draw the water
     	water.draw(statistics.delta_time);
+
+        island.draw(statistics.delta_time);
 
     	// update time stamps and stuff
         statistics.on_frame();
