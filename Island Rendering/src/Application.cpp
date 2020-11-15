@@ -14,6 +14,8 @@
 #include "./water/water_entity.h"
 #include "./island/island_entity.h"
 
+#include "./skybox/skybox_entity.h"
+
 
 struct app_stats
 {
@@ -48,10 +50,14 @@ GLuint seafloor_vao, sky_vao; // just for testing
 shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
 shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
 shader_prog island_shader("shaders/island.vert.glsl", "shaders/island.frag.glsl");
+shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl");
 
 // water object
 water_entity water;
 island_entity island;
+
+// skybox object
+skybox_entity skybox;
 
 // for window title
 std::string app_name = "Island Rendering";
@@ -65,6 +71,7 @@ void init_scene() {
     island.init(&island_shader);
 	seafloor_vao =  create_quad(glm::vec3(0.678, 0.674, 0.121), &default_shader);
 	sky_vao = create_quad(glm::vec3(1, 0, 0), &default_shader);
+    skybox.init(&skybox_shader);
 }
 
 //basic stuff for testing
@@ -155,6 +162,10 @@ int main(int argc, char *argv[]) {
     island_shader.uniformMatrix4fv("viewMatrix", view);
     island_shader.uniformVec3("lightDirection", lightDirection);
 
+    skybox_shader.activate();
+    skybox_shader.uniformMatrix4fv("projectionMatrix", perspective);
+    skybox_shader.uniformMatrix4fv("viewMatrix", glm::mat4(glm::mat3(view)));
+
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -175,18 +186,21 @@ int main(int argc, char *argv[]) {
     	// draw everything aside the water into reflection buffer
     	default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL)); // leave everything above water
     	water.bind_reflection_buffer();
+        skybox.draw(perspective, view);
         draw_scene(&default_shader);
         water.unbind_current_buffer();
 
 		// draw everything aside the water into refraction buffer
     	water.bind_refraction_buffer();
 		default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything below water
+        skybox.draw(perspective, view);
         draw_scene(&default_shader);
         water.unbind_current_buffer(); // to enable drawing on the screen
 
     	// draw scene normally, reflection and refraction buffers will be used for water calculations
 		default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0));
     	draw_scene(&default_shader);
+        skybox.draw(perspective, view);
 
     	// finally draw the water
     	water.draw(statistics.delta_time);
