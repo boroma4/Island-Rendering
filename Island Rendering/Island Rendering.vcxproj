@@ -175,6 +175,7 @@
     <ClCompile Include="src\utils\shader_util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera\camera_entity.h" />
     <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\utils\geometry.h" />
     <ClInclude Include="src\utils\shader_util.h" />
@@ -198,6 +199,8 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\skybox.frag.glsl" />
+    <None Include="shaders\skybox.vert.glsl" />
     <None Include="shaders\water.frag.glsl">
       <FileType>Text</FileType>
     </None>

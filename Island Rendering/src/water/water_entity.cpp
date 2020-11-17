@@ -13,7 +13,7 @@ void water_entity::init(shader_prog* shader)
 	this->tile_vao = create_textured_quad(glm::vec3(0.090, 0.772, 0.909), shader);
 	this->frame_buffers = new water_frame_buffers();
 	this->dudv_tex = load_texture(GL_TEXTURE_2D, GL_RGBA, "res/waterDUDV.png");
-	this->transform = new entity_transform(glm::vec3(0.0, WATER_LEVEL, 0.0), glm::vec3(2.0, 1.0, 20.0), glm::vec3(-90.0, 0, 0));
+	this->transform = new entity_transform(glm::vec3(0.0, WATER_LEVEL, 0.0), glm::vec3(4.0, 1.0, 20.0), glm::vec3(-90.0, 0, 0));
 }
 
 void water_entity::draw(const float delta_time)

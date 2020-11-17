@@ -41,7 +41,8 @@ void main(void) {
     vec3 l = normalize(-lightDirection);
     vec3 v = normalize(-interpolatedPosition);
     vec3 h = normalize(l + v);
-    vec4 mixedColor = mix(mix(reflectionCol, refractionCol, 0.5), vec4(interpolatedColor, 1.0), 0.3);
+    vec4 mixedColor = mix(mix(reflectionCol, refractionCol, 0.5), vec4(interpolatedColor, 1.0), 0.25);
+    //TODO: use correct material constants
     float lighting = 0.1 + max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), 1000);
     vec4 finalColor = pow(mixedColor, vec4(gamma)) * lighting;
     color = pow(finalColor, vec4(1.0 / gamma));
