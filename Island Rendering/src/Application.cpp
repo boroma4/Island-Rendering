@@ -1,4 +1,5 @@
 #define GLEW_STATIC    // to use static linking of GLEW library
+#define STB_IMAGE_IMPLEMENTATION  // to use image loading (for icon)
 
 // ---------------------------- Includes -------------------------- //
 #include <stdlib.h>         // C++ standard library
@@ -14,6 +15,7 @@
 #include "./water/water_entity.h"
 #include "./skybox/skybox_entity.h"
 #include "./camera/camera_entity.h"
+#include "./vendor/stb_image.h"
 
 struct app_stats
 {
@@ -101,6 +103,14 @@ void update_window_title(GLFWwindow* window)
 	}
 }
 
+void load_window_icon(GLFWwindow* window)
+{
+	GLFWimage images[1]; 
+	images[0].pixels = stbi_load("res/icon.png", &images[0].width, &images[0].height, nullptr, 4); //rgba channels 
+	glfwSetWindowIcon(window, 1, images); 
+	stbi_image_free(images[0].pixels);
+}
+
 /*
  * Could create some input util later
  */
@@ -183,12 +193,14 @@ int main(int argc, char *argv[]) {
 	std::cout << "Renderer: " << glGetString (GL_RENDERER) << std::endl;
 	std::cout << "OpenGL version supported: " << glGetString (GL_VERSION) << std::endl;
 
+    // put a cute icon next to the title
+	load_window_icon(win);
+
     // inputs
 	glfwSetCursorPosCallback(win, mouse_callback);
 	glfwSetMouseButtonCallback(win, mouse_button_callback);
 	glfwSetKeyCallback(win, key_callback);
 
-	
 	// compile shaders
     default_shader.use();
 	water_shader.use();
