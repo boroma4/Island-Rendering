@@ -2,11 +2,14 @@
 #include "perlin_noise.h"
 #include <iostream>
 #include <GLFW\glfw3.h>
+#include "../Settings.h"
 
 void island_entity::init(shader_prog* shader)
 {
 	this->shader = shader;
 	this->tile_vao = create_perlin_quad(glm::vec3(0.0, 0.0, 0.0), shader);
+
+	//this->tile_vao = create_quad(glm::vec3(0.0, 0.0, 0.0), shader);
 
 	this->transform = new entity_transform(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
 }
@@ -17,7 +20,14 @@ void island_entity::draw(const float delta_time)
 
 	// apply current transformation to the entity and send model matrix
 	auto model_matrix = glm::mat4(1.0);
-	model_matrix = glm::rotate(model_matrix, glm::radians(90.0f) * float(glfwGetTime()) / 5.0f, glm::vec3(0.0, 1.0, 0.0));
+	
+    //model_matrix = glm::rotate(model_matrix, glm::radians(90.0f) * float(glfwGetTime()) / 5.0f, glm::vec3(0.0, 1.0, 0.0));
+	model_matrix = glm::translate(model_matrix, glm::vec3(0.0, WATER_LEVEL - 10, 0.0));
+	//model_matrix = glm::scale(model_matrix, glm::vec3(50.0, 0.0, 50.0));
+	//model_matrix = glm::rotate(model_matrix, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+	model_matrix = glm::translate(model_matrix, glm::vec3(-400, 0.0, -400));
+	
+	
 	this->transform->apply(model_matrix);
 	this->shader->uniformMatrix4fv("modelMatrix", model_matrix);
 

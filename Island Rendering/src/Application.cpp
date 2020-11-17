@@ -81,14 +81,14 @@ void draw_scene(shader_prog* shader) {
     std::stack<glm::mat4> ms;
 	ms.push(glm::mat4(1.0));
 
-	ms.push(ms.top());
-		ms.top() = glm::translate(ms.top(), glm::vec3(0.0, WATER_LEVEL - 10, 0.0));
-		ms.top() = glm::scale(ms.top(), glm::vec3(20.0, 5.0, 30.0));
-	    ms.top() = glm::rotate(ms.top(), glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
-	    shader->uniformMatrix4fv("modelMatrix", ms.top());
-	    glBindVertexArray(seafloor_vao);
-	    glDrawArrays(GL_TRIANGLES, 0, 6);
-	ms.pop();
+	//ms.push(ms.top());
+	//	ms.top() = glm::translate(ms.top(), glm::vec3(0.0, WATER_LEVEL - 10, 0.0));
+	//	ms.top() = glm::scale(ms.top(), glm::vec3(20.0, 5.0, 30.0));
+	//    ms.top() = glm::rotate(ms.top(), glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+	//    shader->uniformMatrix4fv("modelMatrix", ms.top());
+	//    glBindVertexArray(seafloor_vao);
+	//    glDrawArrays(GL_TRIANGLES, 0, 6);
+	//ms.pop();
 	ms.push(ms.top());
 		ms.top() = glm::translate(ms.top(), glm::vec3(0.0, WATER_LEVEL + 20, 0.0));
 		ms.top() = glm::scale(ms.top(), glm::vec3(1.0, 2.0, 2.0));
