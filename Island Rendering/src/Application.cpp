@@ -301,6 +301,7 @@ int main(int argc, char *argv[]) {
     	// finally draw the water
     	water_shader.activate();
     	water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
+    	water_shader.uniformVec3("cameraPosition", camera.position);
     	water.draw(statistics.delta_time);
 
     	// update time stamps and stuff

@@ -25,16 +25,19 @@ const float SENSITIVITY =  0.1f;
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
 class camera_entity
 {
-public:
-    // camera Attributes
-    glm::vec3 position;
-    glm::vec3 front;
+
+private:
+	glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 world_up;
     // euler Angles
     float yaw;
     float pitch;
+	
+public:
+    // camera Attributes
+    glm::vec3 position;
     // camera options
     float movement_speed;
     float mouse_sensitivity;

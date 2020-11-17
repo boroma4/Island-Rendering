@@ -49,7 +49,7 @@ void water_frame_buffers::init_reflection_fbo()
 {
 	reflection_frame_buffer = create_fbo();
 	reflection_texture = create_texture_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-	//reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+	reflection_depth_buffer = create_depth_buffer_attachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
 	unbind_current_fbo();
 }
 
