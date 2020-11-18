@@ -77,30 +77,30 @@ GLuint create_perlin_quad(glm::vec3 color, shader_prog* shader) {
     float s = 10.0;
 
     int mapSize = 50;
-    float elementSize = 16.0;
-    float elementHeight = 4.0;
+    float elementSize = 0.5;
+    float elementHeight = 2.0;
+
+    float step = 1 / (elementSize * mapSize);
 
     unsigned int seed = 227;
     PerlinNoise pn(seed);
-
-    
 
     std::vector<float> tempArray = { };
 
     for (int i = 0; i < mapSize ; i++) {
         for (int j = 0; j < mapSize ; j++) {
-            double x = (double)i / ((double)mapSize);
-            double y = (double)j / ((double)mapSize);
+            float x = i * step;
+            float y = j * step;
 
-            float noiseVar = 10.0;
+            float noiseVar = 20.0;
             // Wood like structure
-            float n = noiseVar * pn.noise(x, y, 0);
+            float n = noiseVar * pn.noise(x, y, 0.8);
             n = n - floor(n);
-            float n_next_x = noiseVar * pn.noise(x + 1, y, 0);
+            float n_next_x = noiseVar * pn.noise(x + step, y, 0.8);
             n_next_x = n_next_x - floor(n_next_x);
-            float n_next_y = noiseVar * pn.noise(x, y + 1, 0);
+            float n_next_y = noiseVar * pn.noise(x, y + step, 0.8);
             n_next_y = n_next_y - floor(n_next_y);
-            float n_next_xy = noiseVar * pn.noise(x + 1, y + 1, 0);
+            float n_next_xy = noiseVar * pn.noise(x + step, y + step, 0.8);
             n_next_xy = n_next_xy - floor(n_next_xy);
 
             /*float vertex1[] = { i * elementSize, n * elementHeight, j * elementSize };
@@ -113,10 +113,10 @@ GLuint create_perlin_quad(glm::vec3 color, shader_prog* shader) {
             float vertex3[] = { i * elementSize, (j + 1) * elementSize, 1 * elementHeight };
             float vertex4[] = { (i + 1) * elementSize, (j + 1) * elementSize, 1 * elementHeight };*/
 
-            float vertex1[] = { i * elementSize, n * elementHeight, j * elementSize };
-            float vertex2[] = { (i + 1) * elementSize, n_next_x * elementHeight, j * elementSize };
-            float vertex3[] = { i * elementSize, n_next_y * elementHeight, (j + 1) * elementSize };
-            float vertex4[] = { (i + 1) * elementSize, n_next_xy * elementHeight, (j + 1) * elementSize };
+            float vertex1[] = { i * elementSize,  elementHeight, j * elementSize };
+            float vertex2[] = { (i + 1) * elementSize, elementHeight, j * elementSize };
+            float vertex3[] = { i * elementSize, elementHeight, (j + 1) * elementSize };
+            float vertex4[] = { (i + 1) * elementSize, elementHeight, (j + 1) * elementSize };
 
             float Vector[3], Vector2[3];
 
@@ -132,10 +132,10 @@ GLuint create_perlin_quad(glm::vec3 color, shader_prog* shader) {
 
             tempArray.insert(tempArray.end(), {
                 //X Y  Z                               Color        Normal      
-                vertex1[0], vertex1[1], vertex1[2],  n, n, n, Normal[0], Normal[1], Normal[2],
-                vertex2[0], vertex2[1], vertex2[2],  n, n, n, Normal[0], Normal[1], Normal[2],
-                vertex3[0], vertex3[1], vertex3[2],  n, n, n, Normal[0], Normal[1], Normal[2],
-                vertex4[0], vertex4[1], vertex4[2],  n, n, n, Normal[0], Normal[1], Normal[2],
+                vertex1[0], vertex1[1], vertex1[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
+                vertex2[0], vertex2[1], vertex2[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
+                vertex3[0], vertex3[1], vertex3[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
+                vertex4[0], vertex4[1], vertex4[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
             });
 
             //tempArray.insert(tempArray.end(), {
