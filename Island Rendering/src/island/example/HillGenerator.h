@@ -34,6 +34,8 @@ class HillGenerator
 
 	void PopulateNormals(Vertex** vertexGrid);
 
+	void PopulateColors(Vertex** vertexGrid);
+
 	void CreateIndexArray(unsigned int* indexArray);
 
 public:

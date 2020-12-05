@@ -239,6 +239,20 @@ void HillGenerator::PopulateNormals(Vertex** vertexGrid)
 	}
 }
 
+void HillGenerator::PopulateColors(Vertex** vertexGrid)
+{
+	int x0, x1;
+	int y0, y1;
+
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			vertexGrid[x][y].color = glm::vec3{x,0,0};
+		}
+	}
+}
+
 void HillGenerator::CreateIndexArray(unsigned int* indexArray)
 {
 	int index = 0;
@@ -268,6 +282,8 @@ Mesh* HillGenerator::exportMesh(float width, float height)
 
 	PopulatePositions(vertexGrid, width, height);
 
+	PopulateColors(vertexGrid);
+
 	PopulateNormals(vertexGrid);
 
 	// no. indices required for GL_TRIANGLE_STRIP + 4 degenerative triangles per strip
@@ -277,6 +293,7 @@ Mesh* HillGenerator::exportMesh(float width, float height)
 	CreateIndexArray(indexArray);
 
 	std::vector<VertexComponents> format;
+	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 
