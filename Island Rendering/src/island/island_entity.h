@@ -2,7 +2,7 @@
 #include "../utils/shader_util.h"
 #include "../utils/geometry.h"
 #include "../utils/entity_transform.h"
-#include "HillGenerator.h"
+#include "island_generator.h"
 
 class island_entity
 {
@@ -18,7 +18,7 @@ private:
 	int mapSize = 50;
 	int size;
 
-	HillGenerator* heightMap;
+	island_generator* heightMap;
 
 	glm::vec3 position;
 	glm::vec3 rotation;

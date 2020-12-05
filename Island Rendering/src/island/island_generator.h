@@ -1,10 +1,10 @@
 #include <GLEW\glew.h>
-#ifndef HILLGENERATOR_H
-#define HILLGENERATOR_H
+#ifndef ISLANDGENERATOR_H
+#define ISLANDGENERATOR_H
 
 #include "../utils/geometry.h"
 
-class HillGenerator
+class island_generator
 {
 	float** heightMap;
 	float** bumpMap;
@@ -41,7 +41,7 @@ class HillGenerator
 	void CreateIndexArray(unsigned int* indexArray);
 
 public:
-	HillGenerator(unsigned int size,
+	island_generator(unsigned int size,
 		unsigned int numHills,
 		unsigned int minRadius,
 		unsigned int maxRadius,
@@ -54,9 +54,9 @@ public:
 
 	unsigned int GetSize();
 
-	GLuint getVao(float width, float height, shader_prog* shader);
+	GLuint getVao(float width, float height);
 
-	~HillGenerator();
+	~island_generator();
 };
 
 

@@ -25,7 +25,7 @@ struct VertexComponents
 	{}
 };
 
-GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, GLfloat vertexData[], unsigned int indexCount, GLenum primitive, shader_prog* shader);
+GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, unsigned int* indexBuffer, unsigned int indexCount, GLenum primitive);
 GLuint create_quad(glm::vec3 color, shader_prog* shader);
 GLuint create_textured_quad(glm::vec3 color, shader_prog* shader);
 GLuint create_sphere(float radius, int width_segments, int height_segments, glm::vec3 color, int &chopper_body_triangle_count, shader_prog* shader);

@@ -42,7 +42,7 @@
     <ClCompile Include="src\skybox\skybox_entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\island\HillGenerator.cpp">
+    <ClCompile Include="src\island\island_generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="src\skybox\skybox_entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\island\HillGenerator.h">
+    <ClInclude Include="src\island\island_generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

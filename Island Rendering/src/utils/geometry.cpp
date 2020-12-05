@@ -9,12 +9,12 @@ Vertex::Vertex(glm::vec3 position, glm::vec3 color,glm::vec3 normal)
     : position(position), color(color), normal(normal)
 {}
 
-GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, GLfloat vertexData[], unsigned int indexCount, GLenum primitive, shader_prog* shader)
+GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, unsigned int* indexBuffer, unsigned int indexCount, GLenum primitive)
 {
     GLuint vertexArrayHandle;
     GLuint arrayBufferHandle;
 
-    //GLuint indexBufferObject;
+    GLuint indexBufferObject;
 
     glGenVertexArrays(1, &vertexArrayHandle);
     glBindVertexArray(vertexArrayHandle);
@@ -25,30 +25,13 @@ GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, u
         totalSize += format[i].size;
     }
 
-
-
     glGenBuffers(1, &arrayBufferHandle);
-
-    float s = 10.0;
-    glm::vec3 color = glm::vec3(1.0, 0.0, 0.0);
-
-    //GLfloat vertexData[] = {
-    //    //  X Y  Z              Color                 Normal      
-    //    -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-    //     s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-    //    -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-    //     s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-    //     s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-    //    -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f
-    //};
-
     glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
-    //glBufferData(GL_ARRAY_BUFFER, totalSize * vertexCount, vertexBuffer, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * 4, vertexData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, totalSize * vertexCount, vertexBuffer, GL_STATIC_DRAW);
 
-    //glGenBuffers(1, &indexBufferObject);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexBuffer, GL_STATIC_DRAW);
+    glGenBuffers(1, &indexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexBuffer, GL_STATIC_DRAW);
 
     unsigned int offset = 0;
     for (unsigned int i = 0; i < format.size(); i++)
@@ -57,23 +40,6 @@ GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, u
         glVertexAttribPointer(i, format[i].dimensions, format[i].dataType, GL_FALSE, totalSize, (void*)offset);
         offset += format[i].size;
     }
-
-    //GLuint loc = glGetAttribLocation(shader->getProg(), "position");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(0 * sizeof(float)));
-
-    //loc = glGetAttribLocation(shader->getProg(), "color");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "color"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(3 * sizeof(float)));
-
-    //loc = glGetAttribLocation(shader->getProg(), "normal");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "normal"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(6 * sizeof(float)));
-
-    glBindVertexArray(0);
 
     return vertexArrayHandle;
 }
@@ -136,8 +102,8 @@ GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
     glGenBuffers(1, &arrayBufferHandle);
 
     float s = 10.0;
-    
-    std::vector<GLfloat> vertexData = {
+
+    GLfloat vertexData[] = {
         //  X Y  Z              Color                 Normal         U    V
         -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
@@ -145,21 +111,10 @@ GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
          s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
         -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
-    };    
-    //GLfloat vertexData[] = {
-    //        //  X Y  Z              Color                 Normal         U    V
-    //        -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-    //         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-    //        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-    //         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-    //         s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-    //        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
-    //};
-
-    GLfloat* thing = &vertexData[0];
+    };
 
     glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
-     glBufferData(GL_ARRAY_BUFFER, vertexData.size() * 4, thing, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
     GLuint loc = glGetAttribLocation(shader->getProg(), "position");
     if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));

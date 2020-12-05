@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <glm/glm.hpp>
-#include "HillGenerator.h"
+#include "island_generator.h"
 #include <iostream>
 #include <vector>
 
-HillGenerator::HillGenerator(unsigned int size,
+island_generator::island_generator(unsigned int size,
 	unsigned int numHills,
 	unsigned int minRadius,
 	unsigned int maxRadius,
@@ -36,12 +36,12 @@ HillGenerator::HillGenerator(unsigned int size,
 	}
 }
 
-float HillGenerator::RandomFloat(float min, float max)
+float island_generator::RandomFloat(float min, float max)
 {
 	return min + (static_cast<float> (rand()) / static_cast<float> (RAND_MAX)) * (max - min);
 }
 
-void HillGenerator::SumMaps()
+void island_generator::SumMaps()
 {
 	for (int x = 0; x < size; x++)
 	{
@@ -52,7 +52,7 @@ void HillGenerator::SumMaps()
 	}
 }
 
-void HillGenerator::ClampEdges()
+void island_generator::ClampEdges()
 {
 	for (int clampI = 0; clampI < clampWidth; clampI++)
 	{
@@ -72,7 +72,7 @@ void HillGenerator::ClampEdges()
 
 }
 
-void HillGenerator::GenerateHeightmap()
+void island_generator::GenerateHeightmap()
 {
 	for (int i = 0; i < numHills; i++)
 	{
@@ -94,7 +94,7 @@ void HillGenerator::GenerateHeightmap()
 }
 
 
-void HillGenerator::AddGaussianHill(bool isIsland)
+void island_generator::AddGaussianHill(bool isIsland)
 {
 	float originX;
 	float originY;
@@ -139,7 +139,7 @@ void HillGenerator::AddGaussianHill(bool isIsland)
 
 }
 
-void HillGenerator::AddSphereHill()
+void island_generator::AddSphereHill()
 {
 	float originX = RandomFloat(0, size - 1);
 	float originY = RandomFloat(0, size - 1);
@@ -167,7 +167,7 @@ void HillGenerator::AddSphereHill()
 
 }
 
-void HillGenerator::Normalize(float** map, float scale)
+void island_generator::Normalize(float** map, float scale)
 {
 	float globalMax = map[0][0];
 	float globalMin = map[0][0];
@@ -195,7 +195,7 @@ void HillGenerator::Normalize(float** map, float scale)
 	}
 }
 
-void HillGenerator::PopulatePositions(Vertex** vertexGrid, float width, float height)
+void island_generator::PopulatePositions(Vertex** vertexGrid, float width, float height)
 {
 	for (int x = 0; x < size; x++)
 	{
@@ -208,7 +208,7 @@ void HillGenerator::PopulatePositions(Vertex** vertexGrid, float width, float he
 	}
 }
 
-void HillGenerator::PopulateNormals(Vertex** vertexGrid)
+void island_generator::PopulateNormals(Vertex** vertexGrid)
 {
 	int x0, x1;
 	int y0, y1;
@@ -241,7 +241,7 @@ void HillGenerator::PopulateNormals(Vertex** vertexGrid)
 	}
 }
 
-void HillGenerator::PopulateColors(Vertex** vertexGrid)
+void island_generator::PopulateColors(Vertex** vertexGrid)
 {
 
 	for (int x = 0; x < size; x++)
@@ -256,7 +256,7 @@ void HillGenerator::PopulateColors(Vertex** vertexGrid)
 	}
 }
 
-void HillGenerator::CreateIndexArray(unsigned int* indexArray)
+void island_generator::CreateIndexArray(unsigned int* indexArray)
 {
 	int index = 0;
 
@@ -274,7 +274,7 @@ void HillGenerator::CreateIndexArray(unsigned int* indexArray)
 	}
 }
 
-GLuint HillGenerator::getVao(float width, float height, shader_prog* shader)
+GLuint island_generator::getVao(float width, float height)
 {
 	Vertex* vertexArray = new Vertex[size * size];
 	Vertex** vertexGrid = new Vertex * [size];
@@ -300,41 +300,13 @@ GLuint HillGenerator::getVao(float width, float height, shader_prog* shader)
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 
-	std::vector<GLfloat> vertices;
-	for (int x = 0; x < size; x++)
-	{
-		for (int y = 0; y < size; y++)
-		{
-			vertices.push_back(vertexGrid[x][y].position.r);
-			vertices.push_back(vertexGrid[x][y].position.g);
-			vertices.push_back(vertexGrid[x][y].position.b);
-
-			vertices.push_back(vertexGrid[x][y].color.r);
-			vertices.push_back(vertexGrid[x][y].color.g);
-			vertices.push_back(vertexGrid[x][y].color.b);
-
-			vertices.push_back(vertexGrid[x][y].normal.r);
-			vertices.push_back(vertexGrid[x][y].normal.g);
-			vertices.push_back(vertexGrid[x][y].normal.b);
-
-		}
-	}
-
-	//GLfloat vertexData[] = vertices.data();
-
-	/*std::vector<double> v;
-	double* a = &v[0];*/
-
-	//GLfloat vertexData[indexSize];
-
-	//return create_handle(format, (void*)vertexArray, size * size, indexArray, indexSize, GL_TRIANGLE_STRIP, shader);
-	return create_handle(format, (void*)vertexArray, vertices.size(), &vertices[0], indexSize, GL_TRIANGLE_STRIP, shader);
+	return create_handle(format, (void*)vertexArray, size * size, indexArray, indexSize, GL_TRIANGLE_STRIP);
 
 	delete[] vertexArray;
 	delete[] indexArray;
 }
 
-HillGenerator::~HillGenerator()
+island_generator::~island_generator()
 {
 	delete[] heightMap;
 	delete[] bumpMap;
