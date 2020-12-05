@@ -163,12 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\island\example\Asset.cpp" />
-    <ClCompile Include="src\island\example\HillGenerator.cpp" />
+    <ClCompile Include="src\island\HillGenerator.cpp" />
     <ClCompile Include="src\island\island_entity.cpp" />
-    <ClCompile Include="src\island\example\Mesh.cpp" />
-    <ClCompile Include="src\island\perlin_noise.cpp" />
-    <ClCompile Include="src\island\perlin_noise.h" />
     <ClCompile Include="src\utils\texture_util.cpp" />
     <ClCompile Include="src\water\water_entity.cpp" />
     <ClCompile Include="src\skybox\skybox_entity.cpp" />
@@ -182,10 +178,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera\camera_entity.h" />
-    <ClInclude Include="src\island\example\Asset.h" />
-    <ClInclude Include="src\island\example\HillGenerator.h" />
+    <ClInclude Include="src\island\HillGenerator.h" />
     <ClInclude Include="src\island\island_entity.h" />
-    <ClInclude Include="src\island\example\Mesh.h" />
     <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\utils\geometry.h" />
     <ClInclude Include="src\utils\shader_util.h" />

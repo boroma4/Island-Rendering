@@ -1,5 +1,4 @@
 #include "island_entity.h"
-#include "perlin_noise.h"
 #include <iostream>
 #include <GLFW\glfw3.h>
 #include "../Settings.h"
@@ -11,7 +10,8 @@ void island_entity::init(shader_prog* shader)
 	float h = 10.0f;
 
 	this->shader = shader;
-	heightMap = new HillGenerator(256, 180, 7, 20, 10, 30, 150, 123);
+	size = 256;
+	heightMap = new HillGenerator(size, 180, 7, 20, 10, 30, 150, 123);
 	position = glm::vec3(0.0, -h / 2, 0.0);
 	rotation = glm::vec3(0.0, 1.0, 0.0);
 	scaling = glm::vec3(w, h, l);
@@ -19,7 +19,7 @@ void island_entity::init(shader_prog* shader)
 	transform = new entity_transform(position, scaling, rotation);
 
 	heightMap->GenerateHeightmap();
-	model = heightMap->exportMesh(1.0, 1.0);
+	tile_vao = heightMap->getVao(1.0, 1.0, shader);
 }
 
 void island_entity::draw(const float delta_time)
@@ -31,5 +31,7 @@ void island_entity::draw(const float delta_time)
 	transform->apply(model_matrix);
 	shader->uniformMatrix4fv("modelMatrix", model_matrix);
 
-	model->Render();
+	glBindVertexArray(this->tile_vao);
+	//glDrawElements(GL_TRIANGLE_STRIP, (size - 1) * (size * 2) + (size - 2) * 2, GL_UNSIGNED_INT, NULL);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

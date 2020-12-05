@@ -1,6 +1,83 @@
 ﻿#include "geometry.h"
-#include "../island/perlin_noise.h"
 #include <iostream>
+
+Vertex::Vertex()
+    :position(glm::vec3(0.0, 0.0, 0.0)), color(glm::vec3(0.0, 0.0, 0.0)), normal(glm::vec3(0.0, 0.0, 0.0))
+{}
+
+Vertex::Vertex(glm::vec3 position, glm::vec3 color,glm::vec3 normal)
+    : position(position), color(color), normal(normal)
+{}
+
+GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, GLfloat vertexData[], unsigned int indexCount, GLenum primitive, shader_prog* shader)
+{
+    GLuint vertexArrayHandle;
+    GLuint arrayBufferHandle;
+
+    //GLuint indexBufferObject;
+
+    glGenVertexArrays(1, &vertexArrayHandle);
+    glBindVertexArray(vertexArrayHandle);
+
+    unsigned int totalSize = 0;
+    for (int i = 0; i < format.size(); i++)
+    {
+        totalSize += format[i].size;
+    }
+
+
+
+    glGenBuffers(1, &arrayBufferHandle);
+
+    float s = 10.0;
+    glm::vec3 color = glm::vec3(1.0, 0.0, 0.0);
+
+    //GLfloat vertexData[] = {
+    //    //  X Y  Z              Color                 Normal      
+    //    -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+    //     s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+    //    -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+    //     s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+    //     s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+    //    -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f
+    //};
+
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
+    //glBufferData(GL_ARRAY_BUFFER, totalSize * vertexCount, vertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * 4, vertexData, GL_STATIC_DRAW);
+
+    //glGenBuffers(1, &indexBufferObject);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexBuffer, GL_STATIC_DRAW);
+
+    unsigned int offset = 0;
+    for (unsigned int i = 0; i < format.size(); i++)
+    {
+        glEnableVertexAttribArray(i);
+        glVertexAttribPointer(i, format[i].dimensions, format[i].dataType, GL_FALSE, totalSize, (void*)offset);
+        offset += format[i].size;
+    }
+
+    //GLuint loc = glGetAttribLocation(shader->getProg(), "position");
+    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));
+    //glEnableVertexAttribArray(loc);
+    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(0 * sizeof(float)));
+
+    //loc = glGetAttribLocation(shader->getProg(), "color");
+    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "color"));
+    //glEnableVertexAttribArray(loc);
+    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(3 * sizeof(float)));
+
+    //loc = glGetAttribLocation(shader->getProg(), "normal");
+    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "normal"));
+    //glEnableVertexAttribArray(loc);
+    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(6 * sizeof(float)));
+
+    glBindVertexArray(0);
+
+    return vertexArrayHandle;
+}
+
 
 /**
  * This function creates a colored quad.
@@ -50,130 +127,6 @@ GLuint create_quad(glm::vec3 color, shader_prog* shader) {
     return vertexArrayHandle;
 }
 
-float* CrossProduct(float* a, float* b)
-{
-    float Product[3];
-
-    //Cross product formula 
-    Product[0] = (a[1] * b[2]) - (a[2] * b[1]);
-    Product[1] = (a[2] * b[0]) - (a[0] * b[2]);
-    Product[2] = (a[0] * b[1]) - (a[1] * b[0]);
-
-    return Product;
-}
-
-
-/**
- * This function creates a colored perlin quad.
- */
-GLuint create_perlin_quad(glm::vec3 color, shader_prog* shader) {
-    GLuint vertexArrayHandle;
-    GLuint arrayBufferHandle;
-
-    glGenVertexArrays(1, &vertexArrayHandle);
-    glBindVertexArray(vertexArrayHandle);
-    //glGenBuffers(1, &arrayBufferHandle);
-
-    //float s = 10.0;
-
-    //int mapSize = 50;
-    //float elementSize = 0.5;
-    //float elementHeight = 2.0;
-
-    //float step = 1 / (elementSize * mapSize);
-
-    //unsigned int seed = 227;
-    //PerlinNoise pn(seed);
-
-    //std::vector<float> tempArray = { };
-
-    //for (int i = 0; i < mapSize ; i++) {
-    //    for (int j = 0; j < mapSize ; j++) {
-    //        float x = i * step;
-    //        float y = j * step;
-
-    //        float noiseVar = 20.0;
-    //        // Wood like structure
-    //        float n = noiseVar * pn.noise(x, y, 0.8);
-    //        n = n - floor(n);
-    //        float n_next_x = noiseVar * pn.noise(x + step, y, 0.8);
-    //        n_next_x = n_next_x - floor(n_next_x);
-    //        float n_next_y = noiseVar * pn.noise(x, y + step, 0.8);
-    //        n_next_y = n_next_y - floor(n_next_y);
-    //        float n_next_xy = noiseVar * pn.noise(x + step, y + step, 0.8);
-    //        n_next_xy = n_next_xy - floor(n_next_xy);
-
-    //        /*float vertex1[] = { i * elementSize, n * elementHeight, j * elementSize };
-    //        float vertex2[] = { (i + 1) * elementSize, n_next_x * elementHeight, j * elementSize };
-    //        float vertex3[] = { i * elementSize, n_next_y * elementHeight, (j + 1) * elementSize };
-    //        float vertex4[] = { (i + 1) * elementSize, n_next_xy * elementHeight, (j + 1) * elementSize };*/
-
-    //        /*float vertex1[] = { i * elementSize, j * elementSize, 1 * elementHeight };
-    //        float vertex2[] = { (i + 1) * elementSize, j * elementSize, 1 * elementHeight };
-    //        float vertex3[] = { i * elementSize, (j + 1) * elementSize, 1 * elementHeight };
-    //        float vertex4[] = { (i + 1) * elementSize, (j + 1) * elementSize, 1 * elementHeight };*/
-
-    //        float vertex1[] = { i * elementSize,  elementHeight, j * elementSize };
-    //        float vertex2[] = { (i + 1) * elementSize, elementHeight, j * elementSize };
-    //        float vertex3[] = { i * elementSize, elementHeight, (j + 1) * elementSize };
-    //        float vertex4[] = { (i + 1) * elementSize, elementHeight, (j + 1) * elementSize };
-
-    //        float Vector[3], Vector2[3];
-
-    //        Vector[0] = vertex3[0] - vertex1[0];
-    //        Vector[1] = vertex3[1] - vertex1[1];
-    //        Vector[2] = vertex3[2] - vertex1[2];
-
-    //        Vector2[0] = vertex2[0] - vertex1[0];
-    //        Vector2[1] = vertex2[1] - vertex1[1];
-    //        Vector2[2] = vertex2[2] - vertex1[2];
-
-    //        float* Normal = CrossProduct(Vector, Vector2);
-
-    //        tempArray.insert(tempArray.end(), {
-    //            //X Y  Z                               Color        Normal      
-    //            vertex1[0], vertex1[1], vertex1[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
-    //            vertex2[0], vertex2[1], vertex2[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
-    //            vertex3[0], vertex3[1], vertex3[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
-    //            vertex4[0], vertex4[1], vertex4[2],  n, n, n, 0,1,0,//Normal[0], Normal[1], Normal[2],
-    //        });
-
-    //        //tempArray.insert(tempArray.end(), {
-    //        //    //X Y  Z                               Color        Normal      
-    //        //    vertex1[0], vertex1[1], vertex1[2],  0, 0, 0, Normal[0], Normal[1], Normal[2],
-    //        //    vertex2[0], vertex2[1], vertex2[2],  0, 0, 0, Normal[0], Normal[1], Normal[2],
-    //        //    vertex3[0], vertex3[1], vertex3[2],  0, 0, 0, Normal[0], Normal[1], Normal[2],
-    //        //    vertex4[0], vertex4[1], vertex4[2],  0, 0, 0, Normal[0], Normal[1], Normal[2],
-    //        //    });
-    //    }
-    //}
-    //std::cout << "0. size: " << tempArray.size() << '\n';
-    //GLfloat vertexData[50 * 50 * 4 * 9] = {};
-    //std::copy(tempArray.begin(), tempArray.end(), vertexData);
-
-    //glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
-
-    //GLuint loc = glGetAttribLocation(shader->getProg(), "position");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(0 * sizeof(float)));
-
-    //loc = glGetAttribLocation(shader->getProg(), "color");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "color"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(3 * sizeof(float)));
-
-    //loc = glGetAttribLocation(shader->getProg(), "normal");
-    //if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "normal"));
-    //glEnableVertexAttribArray(loc);
-    //glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (const GLvoid*)(6 * sizeof(float)));
-
-    //glBindVertexArray(0);
-
-    return vertexArrayHandle;
-}
-
 GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
     GLuint vertexArrayHandle;
     GLuint arrayBufferHandle;
@@ -183,8 +136,8 @@ GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
     glGenBuffers(1, &arrayBufferHandle);
 
     float s = 10.0;
-
-    GLfloat vertexData[] = {
+    
+    std::vector<GLfloat> vertexData = {
         //  X Y  Z              Color                 Normal         U    V
         -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
@@ -192,10 +145,21 @@ GLuint create_textured_quad(glm::vec3 color, shader_prog* shader) {
          s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
          s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
         -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
-    };
+    };    
+    //GLfloat vertexData[] = {
+    //        //  X Y  Z              Color                 Normal         U    V
+    //        -s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    //         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+    //        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    //         s,-s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+    //         s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    //        -s, s, 0.0f,  color.r, color.g, color.b, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
+    //};
+
+    GLfloat* thing = &vertexData[0];
 
     glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+     glBufferData(GL_ARRAY_BUFFER, vertexData.size() * 4, thing, GL_STATIC_DRAW);
 
     GLuint loc = glGetAttribLocation(shader->getProg(), "position");
     if (loc < 0) throw (std::runtime_error(std::string("Location not found in shader program for variable ") + "position"));

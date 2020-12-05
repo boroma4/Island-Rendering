@@ -2,7 +2,7 @@
 #include "../utils/shader_util.h"
 #include "../utils/geometry.h"
 #include "../utils/entity_transform.h"
-#include "example/HillGenerator.h"
+#include "HillGenerator.h"
 
 class island_entity
 {
@@ -16,8 +16,8 @@ private:
 	GLuint tile_vao;
 	shader_prog* shader;
 	int mapSize = 50;
+	int size;
 
-	Mesh* model;
 	HillGenerator* heightMap;
 
 	glm::vec3 position;

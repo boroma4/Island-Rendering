@@ -39,22 +39,10 @@
     <ClCompile Include="src\island\island_entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\island\perlin_noise.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\island\perlin_noise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\skybox\skybox_entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\island\example\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\island\example\HillGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\island\example\Asset.cpp">
+    <ClCompile Include="src\island\HillGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,13 +83,7 @@
     <ClInclude Include="src\skybox\skybox_entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\island\example\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\island\example\HillGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\island\example\Asset.h">
+    <ClInclude Include="src\island\HillGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

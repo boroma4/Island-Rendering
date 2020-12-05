@@ -1,6 +1,8 @@
+#include <GLEW\glew.h>
 #ifndef HILLGENERATOR_H
 #define HILLGENERATOR_H
-#include "Mesh.h"
+
+#include "../utils/geometry.h"
 
 class HillGenerator
 {
@@ -52,7 +54,7 @@ public:
 
 	unsigned int GetSize();
 
-	Mesh* exportMesh(float width, float height);
+	GLuint getVao(float width, float height, shader_prog* shader);
 
 	~HillGenerator();
 };

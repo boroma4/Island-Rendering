@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "HillGenerator.h"
 #include <iostream>
+#include <vector>
 
 HillGenerator::HillGenerator(unsigned int size,
 	unsigned int numHills,
@@ -273,7 +274,7 @@ void HillGenerator::CreateIndexArray(unsigned int* indexArray)
 	}
 }
 
-Mesh* HillGenerator::exportMesh(float width, float height)
+GLuint HillGenerator::getVao(float width, float height, shader_prog* shader)
 {
 	Vertex* vertexArray = new Vertex[size * size];
 	Vertex** vertexGrid = new Vertex * [size];
@@ -299,7 +300,35 @@ Mesh* HillGenerator::exportMesh(float width, float height)
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 	format.push_back(VertexComponents(3, sizeof(glm::vec3), GL_FLOAT));
 
-	return new Mesh(format, (void*)vertexArray, size * size, indexArray, indexSize, GL_TRIANGLE_STRIP);
+	std::vector<GLfloat> vertices;
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			vertices.push_back(vertexGrid[x][y].position.r);
+			vertices.push_back(vertexGrid[x][y].position.g);
+			vertices.push_back(vertexGrid[x][y].position.b);
+
+			vertices.push_back(vertexGrid[x][y].color.r);
+			vertices.push_back(vertexGrid[x][y].color.g);
+			vertices.push_back(vertexGrid[x][y].color.b);
+
+			vertices.push_back(vertexGrid[x][y].normal.r);
+			vertices.push_back(vertexGrid[x][y].normal.g);
+			vertices.push_back(vertexGrid[x][y].normal.b);
+
+		}
+	}
+
+	//GLfloat vertexData[] = vertices.data();
+
+	/*std::vector<double> v;
+	double* a = &v[0];*/
+
+	//GLfloat vertexData[indexSize];
+
+	//return create_handle(format, (void*)vertexArray, size * size, indexArray, indexSize, GL_TRIANGLE_STRIP, shader);
+	return create_handle(format, (void*)vertexArray, vertices.size(), &vertices[0], indexSize, GL_TRIANGLE_STRIP, shader);
 
 	delete[] vertexArray;
 	delete[] indexArray;

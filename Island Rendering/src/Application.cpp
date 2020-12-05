@@ -17,7 +17,6 @@
 
 #include "./skybox/skybox_entity.h"
 #include <time.h>
-#include "island/example/Asset.h"
 #include "./camera/camera_entity.h"
 #include "./vendor/stb_image.h"
 
