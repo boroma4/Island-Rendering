@@ -24,6 +24,7 @@ public:
 private:
 	GLuint tile_vao;
 	GLuint dudv_tex;
+	GLuint normal_map_tex;
 	shader_prog* shader;
 	water_frame_buffers* frame_buffers;
 	const float WAVE_SPEED = 0.03f;
