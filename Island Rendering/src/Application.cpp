@@ -13,7 +13,7 @@
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
-#include "./island/island_entity.h"
+//#include "./island/island_entity.h"
 
 #include "./skybox/skybox_entity.h"
 #include <time.h>
@@ -61,7 +61,7 @@ shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl"
 
 // water object
 water_entity water;
-island_entity island;
+//island_entity island;
 HillPlane* islandAsset;
 
 // skybox object
@@ -80,7 +80,7 @@ void init_scene() {
 	// a nice tool for colors https://doc.instantreality.org/tools/color_calculator/
 	water.init(&water_shader);
 	skybox.init(&skybox_shader);
-    island.init(&island_shader);
+    //island.init(&island_shader);
 	seafloor_vao =  create_quad(glm::vec3(0.678, 0.674, 0.121), &default_shader);
     time_t ticks;
     time(&ticks);
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
     
     island_shader.activate();
     island_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    island_shader.uniformMatrix4fv("viewMatrix", view);
+    island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     island_shader.uniformVec3("lightDirection", lightDirection);
 
     skybox_shader.activate();
