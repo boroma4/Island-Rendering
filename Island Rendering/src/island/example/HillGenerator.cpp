@@ -2,6 +2,7 @@
 #include <math.h>
 #include <glm/glm.hpp>
 #include "HillGenerator.h"
+#include <iostream>
 
 HillGenerator::HillGenerator(unsigned int size,
 	unsigned int numHills,
@@ -241,14 +242,15 @@ void HillGenerator::PopulateNormals(Vertex** vertexGrid)
 
 void HillGenerator::PopulateColors(Vertex** vertexGrid)
 {
-	int x0, x1;
-	int y0, y1;
 
 	for (int x = 0; x < size; x++)
 	{
 		for (int y = 0; y < size; y++)
 		{
-			vertexGrid[x][y].color = glm::vec3{x,0,0};
+			float height = heightMap[x][y];
+			//std::cout << norm;
+			//vertexGrid[x][y].color = glm::vec3{ norm,0,0 };
+			vertexGrid[x][y].color = glm::vec3{ height, height, height };
 		}
 	}
 }

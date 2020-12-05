@@ -9,7 +9,7 @@
 
 HillPlane::HillPlane(float w, float h, float l, unsigned int seed, shader_prog* shader)
 	:HeightMap(256, 180, 7, 20, 10, 30, 150, seed),
-	position(0.0, -9.0, 0.0),
+	position(0.0, -h/2, 0.0),
 	rotationAxis(0.0, 1.0, 0.0),
 	rotationDegrees(0.0),
 	scaling(w, h, l)

@@ -28,4 +28,5 @@ void main(void) {
     interpolatedNormal = normalize(normalMatrix * normal);
     interpolatedPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
     interpolatedColor = color;
+    //interpolatedColor = vec3(0, 1, 0);
 }
