@@ -58,7 +58,7 @@ GLuint create_quad(glm::vec3 color, shader_prog* shader) {
     glBindVertexArray(vertexArrayHandle);
     glGenBuffers(1, &arrayBufferHandle);
 
-    float s = 10.0;
+    float s = 1.0;
 
     GLfloat vertexData[] = {
         //  X Y  Z              Color                 Normal      

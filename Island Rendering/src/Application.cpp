@@ -53,7 +53,7 @@ extern "C"
 bool is_camera_movement_allowed = false;
 
 // --- Load the shaders declared in glsl files in the project folder ---//
-shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
+//shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
 shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
 shader_prog island_shader("shaders/island.vert.glsl", "shaders/island.frag.glsl");
 shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl");
@@ -80,28 +80,7 @@ void init_scene() {
 	water.init(&water_shader);
 	skybox.init(&skybox_shader);
     island.init(&island_shader);
-	//seafloor_vao =  create_quad(glm::vec3(0.678, 0.674, 0.121), &default_shader);
-    //time_t ticks;
-    //time(&ticks);
-    //islandAsset = new HillPlane(100.0f, 18.0f, 100.0f, (unsigned int)ticks, &island_shader);
 }
-
-////basic stuff for testing
-//void draw_scene(shader_prog* shader) {
-//    shader->activate();
-//
-//    std::stack<glm::mat4> ms;
-//	ms.push(glm::mat4(1.0));
-//
-//	ms.push(ms.top());
-//		ms.top() = glm::translate(ms.top(), glm::vec3(0.0, WATER_LEVEL - 10, 0.0));
-//		ms.top() = glm::scale(ms.top(), glm::vec3(20.0, 5.0, 30.0));
-//	    ms.top() = glm::rotate(ms.top(), glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
-//	    shader->uniformMatrix4fv("modelMatrix", ms.top());
-//	    glBindVertexArray(seafloor_vao);
-//	    glDrawArrays(GL_TRIANGLES, 0, 6);
-//	ms.pop();
-//}
 
 void update_window_title(GLFWwindow* window)
 {
@@ -213,7 +192,7 @@ int main(int argc, char *argv[]) {
 	glfwSetKeyCallback(win, key_callback);
 
 	// compile shaders
-    default_shader.use();
+    //default_shader.use();
     water_shader.use();
 	skybox_shader.use();
     island_shader.use();
@@ -231,10 +210,10 @@ int main(int argc, char *argv[]) {
 	glm::vec3 lightDirection (-0.0f, -1.0f, -0.0f);
 	
     //Send the view and projection matrices to all shaders.
-    default_shader.activate();
-    default_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    default_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    default_shader.uniformVec3("lightDirection", lightDirection);
+    //default_shader.activate();
+    //default_shader.uniformMatrix4fv("projectionMatrix", perspective);
+    //default_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
+    //default_shader.uniformVec3("lightDirection", lightDirection);
 
     water_shader.activate();
     water_shader.uniformMatrix4fv("projectionMatrix", perspective);
@@ -276,26 +255,23 @@ int main(int argc, char *argv[]) {
     	 */
     	water.bind_reflection_buffer();
 
-    	default_shader.activate();
-    	default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL)); // leave everything above water
 
     	auto distance = 2 * (camera.position.y - WATER_LEVEL);
         // move the camera under the water
     	camera.position.y -= distance;
         camera.invert_pitch();
+    	
+        skybox.draw(perspective, camera.get_view_matrix());
 
-    	default_shader.activate();
-    	default_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    		
-	    skybox.draw(perspective, camera.get_view_matrix());
-	    //draw_scene(&default_shader);
+    	island_shader.activate();
+        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
+    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL)); // leave everything above water
+    	island.draw(statistics.delta_time);
+
 
        // reverse the changes
 		camera.position.y += distance;
         camera.invert_pitch();
-        	
-    	default_shader.activate();
-    	default_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
         
         water.unbind_current_buffer();
     	
@@ -306,12 +282,14 @@ int main(int argc, char *argv[]) {
     	 */
 	
     	water.bind_refraction_buffer();
-
-    	default_shader.activate();
-		default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything below water
     	
         skybox.draw(perspective, camera.get_view_matrix());
-        //draw_scene(&default_shader);
+    	
+    	island_shader.activate();
+        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
+    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything above water
+    	
+    	island.draw(statistics.delta_time);
     	
         water.unbind_current_buffer();
     	
@@ -320,11 +298,7 @@ int main(int argc, char *argv[]) {
     	 * --------
     	 * Disable clipping, draw scene normally, reflection and refraction buffers will be used for water calculations
     	 */
-    
-    	default_shader.activate();
-		default_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0));
-    	
-    	//draw_scene(&default_shader);
+        	
         skybox.draw(perspective, camera.get_view_matrix());
 
     	// finally draw the water
@@ -334,13 +308,11 @@ int main(int argc, char *argv[]) {
     	water.draw(statistics.delta_time);
 
       
-
         island_shader.activate();
+        island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0)); // disable clipping
         island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
         island.draw(statistics.delta_time);
-        //island_shader.uniformVec3("cameraPosition", camera.position);
-        //std::stack<glm::mat4> model_matrix;
-        //islandAsset->Draw(model_matrix);
+
 
     	// update time stamps and stuff
         statistics.on_frame();
