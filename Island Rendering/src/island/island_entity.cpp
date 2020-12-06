@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GLFW\glfw3.h>
 #include "../Settings.h"
+#include <time.h>
 
 void island_entity::init(shader_prog* shader)
 {
@@ -11,8 +12,10 @@ void island_entity::init(shader_prog* shader)
 
 	this->shader = shader;
 	size = 256;
-	heightMap = new island_generator(size, 180, 7, 20, 10, 30, 150, 123);
-	position = glm::vec3(0.0, -h / 2, 0.0);
+	time_t ticks;
+	time(&ticks);
+	heightMap = new island_generator(size, 180, 7, 20, 10, 30, 150, true, (unsigned int)ticks);
+	position = glm::vec3(0.0, -2.0, 0.0);
 	rotation = glm::vec3(0.0, 1.0, 0.0);
 	scaling = glm::vec3(w, h, l);
 
