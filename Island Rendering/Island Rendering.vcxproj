@@ -163,6 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\island\island_generator.cpp" />
+    <ClCompile Include="src\island\island_entity.cpp" />
     <ClCompile Include="src\utils\texture_util.cpp" />
     <ClCompile Include="src\water\water_entity.cpp" />
     <ClCompile Include="src\skybox\skybox_entity.cpp" />
@@ -176,6 +178,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera\camera_entity.h" />
+    <ClInclude Include="src\island\island_generator.h" />
+    <ClInclude Include="src\island\island_entity.h" />
     <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\utils\geometry.h" />
     <ClInclude Include="src\utils\shader_util.h" />
@@ -202,6 +206,8 @@
   <ItemGroup>
     <None Include="shaders\skybox.frag.glsl" />
     <None Include="shaders\skybox.vert.glsl" />
+    <None Include="shaders\island.frag.glsl" />
+    <None Include="shaders\island.vert.glsl" />
     <None Include="shaders\water.frag.glsl">
       <FileType>Text</FileType>
     </None>

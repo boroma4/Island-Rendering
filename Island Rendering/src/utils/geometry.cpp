@@ -1,4 +1,49 @@
 ﻿#include "geometry.h"
+#include <iostream>
+
+Vertex::Vertex()
+    :position(glm::vec3(0.0, 0.0, 0.0)), color(glm::vec3(0.0, 0.0, 0.0)), normal(glm::vec3(0.0, 0.0, 0.0))
+{}
+
+Vertex::Vertex(glm::vec3 position, glm::vec3 color,glm::vec3 normal)
+    : position(position), color(color), normal(normal)
+{}
+
+GLuint create_handle(std::vector<VertexComponents> format, void* vertexBuffer, unsigned int vertexCount, unsigned int* indexBuffer, unsigned int indexCount, GLenum primitive)
+{
+    GLuint vertexArrayHandle;
+    GLuint arrayBufferHandle;
+
+    GLuint indexBufferObject;
+
+    glGenVertexArrays(1, &vertexArrayHandle);
+    glBindVertexArray(vertexArrayHandle);
+
+    unsigned int totalSize = 0;
+    for (int i = 0; i < format.size(); i++)
+    {
+        totalSize += format[i].size;
+    }
+
+    glGenBuffers(1, &arrayBufferHandle);
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBufferHandle);
+    glBufferData(GL_ARRAY_BUFFER, totalSize * vertexCount, vertexBuffer, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &indexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexBuffer, GL_STATIC_DRAW);
+
+    unsigned int offset = 0;
+    for (unsigned int i = 0; i < format.size(); i++)
+    {
+        glEnableVertexAttribArray(i);
+        glVertexAttribPointer(i, format[i].dimensions, format[i].dataType, GL_FALSE, totalSize, (void*)offset);
+        offset += format[i].size;
+    }
+
+    return vertexArrayHandle;
+}
+
 
 /**
  * This function creates a colored quad.
@@ -13,7 +58,7 @@ GLuint create_quad(glm::vec3 color, shader_prog* shader) {
     glBindVertexArray(vertexArrayHandle);
     glGenBuffers(1, &arrayBufferHandle);
 
-    float s = 10.0;
+    float s = 1.0;
 
     GLfloat vertexData[] = {
         //  X Y  Z              Color                 Normal      
