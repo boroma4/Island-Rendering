@@ -127,6 +127,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         camera.process_keyboard(LEFT, statistics.delta_time);
 	if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
         camera.process_keyboard(RIGHT, statistics.delta_time);
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+        skybox.changeSkybox(-1);
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+        skybox.changeSkybox(1);
 }
 
 // glfw: whenever the mouse moves, this callback is called
