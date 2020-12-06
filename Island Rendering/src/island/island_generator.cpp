@@ -12,8 +12,9 @@ island_generator::island_generator(unsigned int size,
 	unsigned int minHeight,
 	unsigned int maxHeight,
 	unsigned int islandRadius,
+	bool isIsland,
 	unsigned int seed)
-	:size(size), numHills(numHills), maxRadius(maxRadius), minRadius(minRadius), maxHeight(maxHeight), minHeight(minHeight), islandRadius(islandRadius), clampWidth(30), seed(seed)
+	:size(size), numHills(numHills), maxRadius(maxRadius), minRadius(minRadius), maxHeight(maxHeight), minHeight(minHeight), islandRadius(islandRadius), clampWidth(30), isIsland(isIsland), seed(seed)
 {
 	srand(seed);
 
@@ -76,7 +77,7 @@ void island_generator::GenerateHeightmap()
 {
 	for (int i = 0; i < numHills; i++)
 	{
-		AddGaussianHill(false);
+		AddGaussianHill(isIsland);
 	}
 
 	for (int i = 0; i < size * 3; i++)
@@ -102,9 +103,7 @@ void island_generator::AddGaussianHill(bool isIsland)
 	if (isIsland)
 	{
 		float theta = RandomFloat(0, 3.14159 * 2);
-
 		float distance = RandomFloat(0, islandRadius);
-
 		originX = size / 2.0f + cos(theta) * distance;
 		originY = size / 2.0f + sin(theta) * distance;
 	}
@@ -115,11 +114,11 @@ void island_generator::AddGaussianHill(bool isIsland)
 	}
 
 	float hillRadius = RandomFloat(minRadius, maxRadius);
-	float hillHeight = RandomFloat(minHeight, maxHeight);
+	//float hillHeight = RandomFloat(minHeight, maxHeight);
 
 	float hillLimit = hillRadius * 3;
-	float heightSq = pow(hillHeight, 2);
-	float expDenom = 2 * pow(hillRadius, 2);
+	//float heightSq = pow(hillHeight, 2);
+	float sqDeviation = pow(hillRadius, 2);
 
 	float minX = glm::clamp(originX - hillLimit + 1, 0.0f, (float)size - 1);
 	float maxX = glm::clamp(originX + hillLimit, 0.0f, (float)size - 1);
@@ -129,11 +128,11 @@ void island_generator::AddGaussianHill(bool isIsland)
 
 	for (int x = minX; x <= maxX; x++)
 	{
-		float exponentX = (x - originX) * (x - originX);
 		for (int y = minY; y <= maxY; y++)
 		{
-			float exponent = -(exponentX + (y - originY) * (y - originY)) / expDenom;
-			heightMap[x][y] += heightSq * pow(2.71828, exponent);
+			float sqDist = pow(x - originX, 2) + pow(y - originY, 2);
+			float exponent = -(sqDist) / (2*sqDeviation);
+			heightMap[x][y] += 1 / (3.14159 * 2* sqDeviation) * pow(2.71828, exponent);
 		}
 	}
 

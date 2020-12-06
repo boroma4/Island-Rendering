@@ -16,6 +16,7 @@ class island_generator
 	unsigned int islandRadius;
 	unsigned int clampWidth;
 	unsigned int seed;
+	bool isIsland;
 
 	unsigned int maxHeight;
 	unsigned int minHeight;
@@ -48,6 +49,7 @@ public:
 		unsigned int minHeight,
 		unsigned int maxHeight,
 		unsigned int islandRadius,
+		bool isIsland,
 		unsigned int seed);
 
 	void GenerateHeightmap();
