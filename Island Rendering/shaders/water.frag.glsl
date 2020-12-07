@@ -12,7 +12,6 @@ uniform float waveStrength;
 in vec3 interpolatedToCameraVector;
 in vec3 interpolatedPosition;
 in vec3 interpolatedColor;
-in vec3 interpolatedNormal;
 in vec2 interpolatedUv;
 in vec4 clipSpace;
 

@@ -12,6 +12,8 @@ class water_entity
 
 public:
 	entity_transform* transform;
+	float wave_strength = 0.1f;
+
 	
 public:
 	~water_entity();
@@ -28,6 +30,5 @@ private:
 	shader_prog* shader;
 	water_frame_buffers* frame_buffers;
 	const float WAVE_SPEED = 0.03f;
-	float wave_strength = 0.1f;
 	float move_factor = 0;
 };

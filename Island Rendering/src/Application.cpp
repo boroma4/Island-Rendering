@@ -14,11 +14,13 @@
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
 #include "./island/island_entity.h"
-
 #include "./skybox/skybox_entity.h"
 #include <time.h>
 #include "./camera/camera_entity.h"
 #include "./vendor/stb_image.h"
+#include "./vendor/imgui/imgui.h"
+#include "./vendor/imgui/imgui_impl_glfw.h"
+#include "./vendor/imgui/imgui_impl_opengl3.h"
 
 
 struct app_stats
@@ -144,7 +146,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !ImGui::IsAnyWindowHovered())
     {
 	   is_camera_movement_allowed = true;
 	   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -199,6 +201,14 @@ int main(int argc, char *argv[]) {
 
     //Init
     init_scene();
+
+	//Setup IMGUI
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(win, true);
+	ImGui_ImplOpenGL3_Init((char *)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
 	/*
 	 * Need to move this stuff somewhere at some point
@@ -320,10 +330,28 @@ int main(int argc, char *argv[]) {
     	// set the fps in the title
     	update_window_title(win);
 
+    	// Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+    	ImGui::Begin("Controls"); 
+        ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 1.0f); 
+        ImGui::End();
+
+    	ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
     	// draw and check input events
     	glfwSwapBuffers(win);
         glfwPollEvents();
     }
 
-    glfwTerminate();
+	ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+	glfwTerminate();
+	glfwDestroyWindow(win);
+
 }
