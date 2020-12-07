@@ -20,7 +20,7 @@ void water_entity::init(shader_prog* shader)
 void water_entity::draw(const float delta_time)
 {
 	// update water distortion factor
-	this->move_factor += this->WAVE_SPEED * delta_time;
+	this->move_factor += this->wave_speed * delta_time;
 	this->move_factor = std::fmod(this->move_factor, 1.0f);
 
 	// send uniforms to the shader
@@ -28,8 +28,7 @@ void water_entity::draw(const float delta_time)
 	this->shader->uniform1f("moveFactor", this->move_factor);
 	this->shader->uniform1f("waveStrength", this->wave_strength);
 	this->shader->uniformTex2D("reflectionTexture", this->frame_buffers->reflection_texture);
-	// add this stuff when there is land
-	//this->shader->uniformTex2D("depthTexture", this->frame_buffers->refraction_depth_texture);
+	this->shader->uniformTex2D("depthTexture", this->frame_buffers->depth_texture);
 	this->shader->uniformTex2D("refractionTexture", this->frame_buffers->refraction_texture);
 	this->shader->uniformTex2D("dudvTexture", this->dudv_tex);
 	this->shader->uniformTex2D("normalMapTexture", this->normal_map_tex);

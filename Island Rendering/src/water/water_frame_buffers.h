@@ -8,10 +8,9 @@ public:
 	// TODO: change to private with getters
 	GLuint reflection_frame_buffer;
 	GLuint reflection_texture;
-	GLuint reflection_depth_buffer;
 	GLuint refraction_frame_buffer;
 	GLuint refraction_texture;
-	GLuint refraction_depth_texture;
+	GLuint depth_texture;
 
 public:
 	water_frame_buffers();
@@ -20,7 +19,6 @@ public:
 	void bind_reflection_fbo();
 	void bind_refraction_fbo();
 	
-
 private:
 	const int REFLECTION_WIDTH = 320;
 	const int REFLECTION_HEIGHT = 180;
@@ -35,5 +33,4 @@ private:
 	GLuint create_fbo();
 	GLuint create_texture_attachment(const int w, const int h);
 	GLuint create_depth_texture_attachment(const int w, const int h);
-	GLuint create_depth_buffer_attachment(const int w, const int h);
 };

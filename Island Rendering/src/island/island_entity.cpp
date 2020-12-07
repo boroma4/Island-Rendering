@@ -15,7 +15,7 @@ void island_entity::init(shader_prog* shader)
 	time_t ticks;
 	time(&ticks);
 	heightMap = new island_generator(size, 180, 7, 20, 10, 30, 150, true, (unsigned int)ticks);
-	position = glm::vec3(0.0, -2.0, 0.0);
+	position = glm::vec3(0.0, WATER_LEVEL - 2, 0.0);
 	rotation = glm::vec3(0.0, 1.0, 0.0);
 	scaling = glm::vec3(w, h, l);
 

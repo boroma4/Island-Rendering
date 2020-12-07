@@ -205,7 +205,6 @@ int main(int argc, char *argv[]) {
 	//Setup IMGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(win, true);
 	ImGui_ImplOpenGL3_Init((char *)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
@@ -229,6 +228,7 @@ int main(int argc, char *argv[]) {
     water_shader.uniformMatrix4fv("projectionMatrix", perspective);
     water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     water_shader.uniformVec3("lightDirection", lightDirection);
+	water_shader.uniformVec2("frustum", glm::vec2(near, far));
     
     island_shader.activate();
     island_shader.uniformMatrix4fv("projectionMatrix", perspective);
@@ -243,13 +243,14 @@ int main(int argc, char *argv[]) {
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glCullFace(GL_BACK);
 	
 	statistics.last_fps_check_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(win)) {
-    	
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    	 
     	/*
     	 * 1) Enable clipping
     	 * 2) Save clipped land and sky to reflection and refraction buffers
@@ -264,7 +265,7 @@ int main(int argc, char *argv[]) {
     	 * Draw everything aside the water into reflection buffer   
     	 */
     	water.bind_reflection_buffer();
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     	auto distance = 2 * (camera.position.y - WATER_LEVEL);
         // move the camera under the water
@@ -292,23 +293,23 @@ int main(int argc, char *argv[]) {
     	 */
 	
     	water.bind_refraction_buffer();
-    	
+    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         skybox.draw(perspective, camera.get_view_matrix());
     	
     	island_shader.activate();
         island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything above water
+    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL+1)); // leave everything above water
     	
     	island.draw(statistics.delta_time);
-    	
         water.unbind_current_buffer();
+
     	
         /*
     	 * STEP 3
     	 * --------
     	 * Disable clipping, draw scene normally, reflection and refraction buffers will be used for water calculations
     	 */
-        	
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
         skybox.draw(perspective, camera.get_view_matrix());
 
     	// finally draw the water
@@ -316,7 +317,6 @@ int main(int argc, char *argv[]) {
     	water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     	water_shader.uniformVec3("cameraPosition", camera.position);
     	water.draw(statistics.delta_time);
-
       
         island_shader.activate();
         island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0)); // disable clipping
@@ -336,7 +336,8 @@ int main(int argc, char *argv[]) {
         ImGui::NewFrame();
 
     	ImGui::Begin("Controls"); 
-        ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 1.0f); 
+        ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 0.5f);
+    	ImGui::SliderFloat("Wave speed", &water.wave_speed, 0.0f, 0.2f); 
         ImGui::End();
 
     	ImGui::Render();

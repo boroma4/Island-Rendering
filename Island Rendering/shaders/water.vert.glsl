@@ -17,6 +17,7 @@ out vec3 interpolatedColor;
 out vec3 interpolatedToCameraVector;
 out vec2 interpolatedUv;
 
+
 void main(void) {
     // probably would be better to send as uniform
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
@@ -29,4 +30,5 @@ void main(void) {
     interpolatedColor = color;
     interpolatedUv = uv;
     interpolatedToCameraVector = cameraPosition - worldPosition.xyz;
+
 }

@@ -13,6 +13,7 @@ class water_entity
 public:
 	entity_transform* transform;
 	float wave_strength = 0.1f;
+	float wave_speed = 0.03f;
 
 	
 public:
@@ -29,6 +30,5 @@ private:
 	GLuint normal_map_tex;
 	shader_prog* shader;
 	water_frame_buffers* frame_buffers;
-	const float WAVE_SPEED = 0.03f;
 	float move_factor = 0;
 };
