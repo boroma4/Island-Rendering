@@ -13,7 +13,6 @@ layout(location = 3) in vec2 uv;
 
 out vec3 interpolatedPosition;
 out vec4 clipSpace;
-out vec3 interpolatedColor;
 out vec3 interpolatedToCameraVector;
 out vec2 interpolatedUv;
 
@@ -27,7 +26,6 @@ void main(void) {
     gl_Position = clipSpace;
 
     interpolatedPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    interpolatedColor = color;
     interpolatedUv = uv;
     interpolatedToCameraVector = cameraPosition - worldPosition.xyz;
 

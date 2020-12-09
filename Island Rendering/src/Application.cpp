@@ -297,7 +297,7 @@ int main(int argc, char *argv[]) {
     	
     	island_shader.activate();
         island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL+1)); // leave everything above water
+    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL + 1)); // leave everything above water
     	
     	island.draw(statistics.delta_time);
         water.unbind_current_buffer();
@@ -334,11 +334,18 @@ int main(int argc, char *argv[]) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-    	ImGui::Begin("Controls"); 
-        ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 0.5f);
-    	ImGui::SliderFloat("Wave speed", &water.wave_speed, 0.0f, 0.2f);
-    	ImGui::SliderFloat("Depth effect factor", &water.depth_effect_factor, 0.02f, 5.0f);
-    	ImGui::SliderFloat("Water shininess", &water.shininess, 0.0f, 1000.0f);
+    	ImGui::Begin("Controls");
+
+    	if (ImGui::CollapsingHeader("Water"))
+		{
+    		ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 0.5f);
+    		ImGui::SliderFloat("Wave speed", &water.wave_speed, 0.0f, 0.2f);
+    		ImGui::SliderFloat("Depth effect coef", &water.depth_effect_factor, 0.02f, 5.0f);
+    		ImGui::SliderFloat("Shininess", &water.shininess, 0.0f, 1000.0f);
+    		ImGui::SliderFloat("Reflectivity power", &water.reflectivity_power, 0.5f, 5.0f);
+    		ImGui::ColorEdit3("Base color", water.base_color);
+		}
+
         ImGui::End();
 
     	ImGui::Render();

@@ -2,6 +2,7 @@
 
 uniform vec2 frustum;
 uniform vec3 lightDirection;
+uniform vec3 baseColor;
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
@@ -11,10 +12,10 @@ uniform float moveFactor;
 uniform float waveStrength;
 uniform float depthEffectFactor;
 uniform float shininess;
+uniform float reflectivityPower;
 
 in vec3 interpolatedToCameraVector;
 in vec3 interpolatedPosition;
-in vec3 interpolatedColor;
 in vec2 interpolatedUv;
 in vec4 clipSpace;
 
@@ -57,18 +58,17 @@ void main(void) {
     vec3 n = normalize(normal);
 
     vec3 viewVector = normalize(interpolatedToCameraVector);
-    float refractivity = clamp(pow(dot(viewVector, n), 0.5), 0.001, 0.999);
+    float refractivity = clamp(pow(dot(viewVector, n), reflectivityPower), 0.001, 0.999);
 
-    vec4 mixedColor = mix(mix(reflectionCol, refractionCol, refractivity), vec4(interpolatedColor, 1.0), 0.25);
+    vec4 mixedColor = mix(mix(reflectionCol, refractionCol, refractivity), vec4(baseColor, 1.0), 0.25);
 
     float gamma = 2.2;
     vec3 l = normalize(-lightDirection);
     vec3 v = viewVector;
     vec3 h = normalize(l + v);
 
-    float lighting = 0.0 + max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), shininess);
-    vec4 finalColor = pow(mixedColor * lighting * depthEffect, vec4(gamma));
+    float lighting = max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), shininess);
+    vec4 finalColor = pow(mixedColor, vec4(gamma)) * lighting * depthEffect;
     color = pow(finalColor, vec4(1.0 / gamma));
     color.a = depthEffect;
-    color = reflectionCol;
 }

@@ -20,11 +20,11 @@ public:
 	void bind_refraction_fbo();
 	
 private:
-	const int REFLECTION_WIDTH = 320;
-	const int REFLECTION_HEIGHT = 180;
+	const int REFLECTION_WIDTH = 640;
+	const int REFLECTION_HEIGHT = 480;
 	
-	const int REFRACTION_WIDTH = 320;
-	const int REFRACTION_HEIGHT = 180;
+	const int REFRACTION_WIDTH = 640;
+	const int REFRACTION_HEIGHT = 480;
 
 private:
 	void init_refraction_fbo();

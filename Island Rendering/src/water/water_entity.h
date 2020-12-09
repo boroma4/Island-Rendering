@@ -16,6 +16,8 @@ public:
 	float wave_speed = 0.03f;
 	float depth_effect_factor = 3.0f;
 	float shininess = 100.0f;
+	float reflectivity_power = 3.0f;
+	float base_color [3] = {0.090, 0.772, 0.909};
 
 	
 public:
