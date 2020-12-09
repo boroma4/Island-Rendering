@@ -55,7 +55,7 @@ void main(void) {
     vec3 n = normalize(normal);
 
     vec3 viewVector = normalize(interpolatedToCameraVector);
-    float refractivity = pow(dot(viewVector, n), 0.5);
+    float refractivity = clamp(pow(dot(viewVector, n), 0.5), 0.001, 0.999);
 
     vec4 mixedColor = mix(mix(reflectionCol, refractionCol, refractivity), vec4(interpolatedColor, 1.0), 0.25);
 
@@ -67,8 +67,7 @@ void main(void) {
 
     //TODO: use correct material constants
     float lighting = 0.1 + max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), 1000);
-    vec4 finalColor = pow(mixedColor, vec4(gamma)) * lighting *  depthEffect;
+    vec4 finalColor = pow(mixedColor, vec4(gamma)) * lighting * depthEffect;
     color = pow(finalColor, vec4(1.0 / gamma));
     color.a = depthEffect;
-    //color = vec4(waterDepth);
 }

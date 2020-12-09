@@ -243,9 +243,9 @@ int main(int argc, char *argv[]) {
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glCullFace(GL_BACK);
 	
 	statistics.last_fps_check_time = glfwGetTime();
 
@@ -312,16 +312,18 @@ int main(int argc, char *argv[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
         skybox.draw(perspective, camera.get_view_matrix());
 
+    	island_shader.activate();
+        island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0)); // disable clipping
+        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
+        island.draw(statistics.delta_time);
+
     	// finally draw the water
     	water_shader.activate();
     	water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     	water_shader.uniformVec3("cameraPosition", camera.position);
     	water.draw(statistics.delta_time);
       
-        island_shader.activate();
-        island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0)); // disable clipping
-        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-        island.draw(statistics.delta_time);
+
 
 
     	// update time stamps and stuff
