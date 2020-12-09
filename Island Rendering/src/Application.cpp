@@ -105,17 +105,17 @@ void load_window_icon(GLFWwindow* window)
  * Could create some input util later
  */
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void processInput(GLFWwindow* window)
 {
-	if (key == GLFW_KEY_ESCAPE && (action == GLFW_PRESS || action == GLFW_REPEAT))
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS )
         glfwSetWindowShouldClose(window, true);
-	if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.process_keyboard(FORWARD, statistics.delta_time);
-	if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera.process_keyboard(BACKWARD, statistics.delta_time);
-	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         camera.process_keyboard(LEFT, statistics.delta_time);
-	if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.process_keyboard(RIGHT, statistics.delta_time);
 }
 
@@ -189,7 +189,6 @@ int main(int argc, char *argv[]) {
     // inputs
 	glfwSetCursorPosCallback(win, mouse_callback);
 	glfwSetMouseButtonCallback(win, mouse_button_callback);
-	glfwSetKeyCallback(win, key_callback);
 
 	// compile shaders
     //default_shader.use();
@@ -248,6 +247,8 @@ int main(int argc, char *argv[]) {
 	statistics.last_fps_check_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(win)) {
+
+    	processInput(win);      //input processing will be called every frame
     	 
     	/*
     	 * 1) Enable clipping
