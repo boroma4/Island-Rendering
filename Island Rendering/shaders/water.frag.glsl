@@ -9,6 +9,8 @@ uniform sampler2D dudvTexture;
 uniform sampler2D normalMapTexture;
 uniform float moveFactor;
 uniform float waveStrength;
+uniform float depthEffectFactor;
+uniform float shininess;
 
 in vec3 interpolatedToCameraVector;
 in vec3 interpolatedPosition;
@@ -34,7 +36,7 @@ void main(void) {
 	float fragmentDistance = 2.0 * near * far / (far + near - (2.0 * fragmentDepth - 1.0) * (far - near));
 
 	float waterDepth = terrainDistance - fragmentDistance;
-    float depthEffect = clamp(3.0 * waterDepth, 0.0, 1.0);
+    float depthEffect = clamp(depthEffectFactor * waterDepth, 0.0, 1.0);
 
     vec2 distortedUv = texture2D(dudvTexture, vec2(interpolatedUv.x + moveFactor, interpolatedUv.y)).rg * 0.1;
 	distortedUv = interpolatedUv + vec2(distortedUv.x, distortedUv.y + moveFactor);
@@ -60,14 +62,13 @@ void main(void) {
     vec4 mixedColor = mix(mix(reflectionCol, refractionCol, refractivity), vec4(interpolatedColor, 1.0), 0.25);
 
     float gamma = 2.2;
-    vec3 viewerPosition = vec3(0.0);
     vec3 l = normalize(-lightDirection);
     vec3 v = viewVector;
     vec3 h = normalize(l + v);
 
-    //TODO: use correct material constants
-    float lighting = 0.1 + max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), 1000);
-    vec4 finalColor = pow(mixedColor, vec4(gamma)) * lighting * depthEffect;
+    float lighting = 0.0 + max(0.0, dot(n, l)) + pow(max(0.0, dot(h, n)), shininess);
+    vec4 finalColor = pow(mixedColor * lighting * depthEffect, vec4(gamma));
     color = pow(finalColor, vec4(1.0 / gamma));
     color.a = depthEffect;
+    color = reflectionCol;
 }

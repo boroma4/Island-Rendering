@@ -14,6 +14,8 @@ public:
 	entity_transform* transform;
 	float wave_strength = 0.1f;
 	float wave_speed = 0.03f;
+	float depth_effect_factor = 3.0f;
+	float shininess = 100.0f;
 
 	
 public:

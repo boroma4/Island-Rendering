@@ -51,7 +51,6 @@ extern "C"
   __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 }
 
-//GLuint seafloor_vao; // just for testing
 bool is_camera_movement_allowed = false;
 
 // --- Load the shaders declared in glsl files in the project folder ---//
@@ -63,7 +62,6 @@ shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl"
 // water object
 water_entity water;
 island_entity island;
-//HillPlane* islandAsset;
 
 // skybox object
 skybox_entity skybox;
@@ -324,8 +322,6 @@ int main(int argc, char *argv[]) {
     	water.draw(statistics.delta_time);
       
 
-
-
     	// update time stamps and stuff
         statistics.on_frame();
 
@@ -339,7 +335,9 @@ int main(int argc, char *argv[]) {
 
     	ImGui::Begin("Controls"); 
         ImGui::SliderFloat("Wave strength", &water.wave_strength, 0.0f, 0.5f);
-    	ImGui::SliderFloat("Wave speed", &water.wave_speed, 0.0f, 0.2f); 
+    	ImGui::SliderFloat("Wave speed", &water.wave_speed, 0.0f, 0.2f);
+    	ImGui::SliderFloat("Depth effect factor", &water.depth_effect_factor, 0.02f, 5.0f);
+    	ImGui::SliderFloat("Water shininess", &water.shininess, 0.0f, 1000.0f);
         ImGui::End();
 
     	ImGui::Render();
