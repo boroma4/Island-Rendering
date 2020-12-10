@@ -51,7 +51,7 @@ public:
     // constructor with vectors
     camera_entity(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
 	:position(pos), front(glm::vec3(0.0f, 0.0f, -1.0f)), world_up(up), yaw(yaw), pitch(pitch),
-	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), near(1.0f), far(300.0f), projection_angle(80.0f),
+	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), near(1.0f), far(200.0f), projection_angle(80.0f),
 	projection_width(SCREEN_WIDTH), projection_height(SCREEN_HEIGHT)
     {
         update_camera_vectors();

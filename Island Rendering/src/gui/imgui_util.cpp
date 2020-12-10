@@ -13,7 +13,7 @@ void imgui_util::init(water_entity* water, GLFWwindow* window)
 
 void imgui_util::render()
 {
-	// Start the Dear ImGui frame
+	    // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -25,8 +25,8 @@ void imgui_util::render()
     		ImGui::SliderFloat("Wave strength", &this->water->wave_strength, 0.0f, 0.5f);
     		ImGui::SliderFloat("Wave speed", &this->water->wave_speed, 0.0f, 0.2f);
     		ImGui::SliderFloat("Depth effect coef", &this->water->depth_effect_factor, 0.02f, 5.0f);
-    		ImGui::SliderFloat("Shininess", &this->water->shininess, 0.0f, 1000.0f);
-    		ImGui::SliderFloat("Reflectivity power", &this->water->reflectivity_power, 0.5f, 5.0f);
+    		ImGui::SliderFloat("Shininess", &this->water->shininess, 0.0f, 200.0f);
+    		ImGui::SliderFloat("Reflectivity", &this->water->reflectivity_power, 0.5f, 5.0f);
     		ImGui::ColorEdit3("Base color", this->water->base_color);
 		}
 

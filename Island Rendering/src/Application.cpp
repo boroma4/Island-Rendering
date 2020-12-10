@@ -1,4 +1,3 @@
-#define GLEW_STATIC    // to use static linking of GLEW library
 #define STB_IMAGE_IMPLEMENTATION  // to use image loading (for icon)
 
 // ---------------------------- Includes -------------------------- //
