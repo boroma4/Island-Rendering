@@ -23,10 +23,11 @@ public:
 public:
 	~water_entity();
 	void init(shader_prog* shader);
-	void draw(float delta_time);
+	void draw(float delta_time, const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::vec3& camera_position);
 	void bind_reflection_buffer();
 	void bind_refraction_buffer();
 	void unbind_current_buffer();
+	void on_screen_resize(int w, int h);
 
 private:
 	GLuint tile_vao;

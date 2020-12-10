@@ -22,7 +22,7 @@ void water_entity::init(shader_prog* shader)
 
 }
 
-void water_entity::draw(const float delta_time)
+void water_entity::draw(const float delta_time, const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::vec3& camera_position)
 {
 	// update water distortion factor
 	this->move_factor += this->wave_speed * delta_time;
@@ -36,6 +36,10 @@ void water_entity::draw(const float delta_time)
 	this->shader->uniform1f("shininess", this->shininess);
 	this->shader->uniform1f("reflectivityPower", this->reflectivity_power);
 	this->shader->uniformVec3("baseColor", glm::vec3(base_color[0], base_color[1], base_color[2]));
+
+	this->shader->uniformMatrix4fv("viewMatrix", view_matrix);
+    this->shader->uniformVec3("cameraPosition", camera_position);
+	this->shader->uniformMatrix4fv("projectionMatrix", projection_matrix);
 	
 	this->shader->uniformTex2D("reflectionTexture", this->frame_buffers->reflection_texture);
 	this->shader->uniformTex2D("depthTexture", this->frame_buffers->depth_texture);
@@ -65,4 +69,9 @@ void water_entity::bind_refraction_buffer()
 void water_entity::unbind_current_buffer()
 {
 	this->frame_buffers->unbind_current_fbo();
+}
+
+void water_entity::on_screen_resize(int w, int h)
+{
+	this->frame_buffers->on_screen_resize(w, h);
 }

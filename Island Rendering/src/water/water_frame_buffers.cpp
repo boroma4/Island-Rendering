@@ -17,10 +17,16 @@ water_frame_buffers::~water_frame_buffers()
 	glDeleteFramebuffers(1, &refraction_frame_buffer);
 }
 
+void water_frame_buffers::on_screen_resize(int w, int h)
+{
+	screen_width = w;
+	screen_height = h;
+}
+
 void water_frame_buffers::unbind_current_fbo()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glViewport(0, 0, screen_width, screen_height);
 }
 
 void water_frame_buffers::bind_reflection_fbo()
