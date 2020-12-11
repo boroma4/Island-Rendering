@@ -1,6 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION  // to use image loading (for icon)
 
 // ---------------------------- Includes -------------------------- //
+#include <chrono>
 #include <stdlib.h>         // C++ standard library
 #include <stdio.h>          // Input/Output
 #include <GLEW/glew.h>      // OpenGL Extension Wrangler -
@@ -8,6 +9,7 @@
 #include <glm/glm.hpp>      // OpenGL math library
 #include <iostream>         // Input and Output
 #include <stack>            // Stack
+#include <thread>
 #include "Settings.h"
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
@@ -87,6 +89,7 @@ void update_window_title(GLFWwindow* window)
 	{
 		auto new_title = app_name + " " + std::to_string(statistics.frame_count) + "FPS";
         glfwSetWindowTitle(window, new_title.c_str());
+    	gui.fps = statistics.frame_count;
     	statistics.reset();
 	}
 }
@@ -114,8 +117,9 @@ void toggle_borderless_mode(GLFWwindow* window)
     	glfwGetWindowPos(window, &statistics.last_window_x_pos, &statistics.last_window_y_pos);
     	auto* monitor = glfwGetPrimaryMonitor();
 		const auto* mode = glfwGetVideoMode(monitor);
-		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, 0);
     }
+	glfwSwapInterval(1);
 	statistics.is_borderless = !statistics.is_borderless;
 }
 
@@ -189,6 +193,12 @@ void window_size_callback(GLFWwindow* window, int w, int h)
  	water.on_screen_resize(w, h);
 }
 
+bool should_not_render(GLFWwindow* window)
+{
+	auto focused = glfwGetWindowAttrib(window, GLFW_FOCUSED);
+	return !focused && statistics.is_borderless;
+}
+
 // ---------------------------- Main -------------------------- //
 int main(int argc, char *argv[]) {
 	
@@ -258,6 +268,13 @@ int main(int argc, char *argv[]) {
 
     while (!glfwWindowShouldClose(win)) {
 
+    	// basically, if you alt-tab in borderless fullscreen, the FPS gets crazy (haven't found a reason yet)
+    	// to prevent this I added some artificial delay to frames in such cases
+    	if (should_not_render(win))
+    	{
+    		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    	}
+    	
     	processInput(win);      //input processing will be called every frame
 
     	// get those once and reuse 
