@@ -34,6 +34,12 @@ private:
     // euler Angles
     float yaw;
     float pitch;
+	// projection
+	float near;
+	float far;
+	float projection_angle;
+	float projection_width;
+	float projection_height;
 	
 public:
     // camera Attributes
@@ -45,7 +51,8 @@ public:
     // constructor with vectors
     camera_entity(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
 	:position(pos), front(glm::vec3(0.0f, 0.0f, -1.0f)), world_up(up), yaw(yaw), pitch(pitch),
-	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY)
+	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), near(1.0f), far(200.0f), projection_angle(80.0f),
+	projection_width(SCREEN_WIDTH), projection_height(SCREEN_HEIGHT)
     {
         update_camera_vectors();
     }
@@ -54,6 +61,16 @@ public:
     glm::mat4 get_view_matrix() const
     {
         return glm::lookAt(position, position + front, up);
+    }
+
+	glm::mat4 get_projection_matrix() const
+    {
+	    return glm::perspective(glm::radians(projection_angle), projection_width / projection_height, near, far);
+    }
+
+	glm::vec2 get_frustum() const
+    {
+	    return glm::vec2(near, far);
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -96,6 +113,12 @@ public:
 
         // update Front, Right and Up Vectors using the updated Euler angles
         update_camera_vectors();
+    }
+
+	void process_screen_resize(int w, int h)
+    {
+	    projection_width = w;
+    	projection_height = h;
     }
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles

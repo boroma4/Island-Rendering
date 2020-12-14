@@ -104,7 +104,7 @@ void skybox_entity::init(shader_prog* shader)
 }
 
 
-void skybox_entity::draw(glm::mat4 perspective, glm::mat4 view) {
+void skybox_entity::draw(const glm::mat4& perspective, const glm::mat4& view) {
 
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     this->shader->activate();

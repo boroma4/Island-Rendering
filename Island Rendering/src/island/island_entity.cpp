@@ -15,7 +15,7 @@ void island_entity::init(shader_prog* shader)
 	time_t ticks;
 	time(&ticks);
 	heightMap = new island_generator(size, 180, 7, 20, 10, 30, 150, true, (unsigned int)ticks);
-	position = glm::vec3(0.0, -2.0, 0.0);
+	position = glm::vec3(0.0, WATER_LEVEL - 2, 0.0);
 	rotation = glm::vec3(0.0, 1.0, 0.0);
 	scaling = glm::vec3(w, h, l);
 
@@ -25,7 +25,7 @@ void island_entity::init(shader_prog* shader)
 	tile_vao = heightMap->getVao(1.0, 1.0);
 }
 
-void island_entity::draw(const float delta_time)
+void island_entity::draw(const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::vec4& clipping_plane)
 {
 	shader->activate();
 
@@ -33,7 +33,10 @@ void island_entity::draw(const float delta_time)
 	auto model_matrix = glm::mat4(1.0);	
 	transform->apply(model_matrix);
 	shader->uniformMatrix4fv("modelMatrix", model_matrix);
-
+	shader->uniformMatrix4fv("viewMatrix", view_matrix);
+	shader->uniformMatrix4fv("projectionMatrix", projection_matrix);
+	shader->uniformVec4("clippingPlane",clipping_plane);
+	
 	glBindVertexArray(this->tile_vao);
 	glDrawElements(GL_TRIANGLE_STRIP, (size - 1) * (size * 2) + (size - 2) * 2, GL_UNSIGNED_INT, NULL);
 }

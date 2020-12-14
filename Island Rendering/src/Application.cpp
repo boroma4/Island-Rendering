@@ -1,7 +1,7 @@
-#define GLEW_STATIC    // to use static linking of GLEW library
 #define STB_IMAGE_IMPLEMENTATION  // to use image loading (for icon)
 
 // ---------------------------- Includes -------------------------- //
+#include <chrono>
 #include <stdlib.h>         // C++ standard library
 #include <stdio.h>          // Input/Output
 #include <GLEW/glew.h>      // OpenGL Extension Wrangler -
@@ -9,16 +9,18 @@
 #include <glm/glm.hpp>      // OpenGL math library
 #include <iostream>         // Input and Output
 #include <stack>            // Stack
+#include <thread>
 #include "Settings.h"
 #include "./utils/shader_util.h"
 #include "./utils/geometry.h"
 #include "./water/water_entity.h"
 #include "./island/island_entity.h"
-
 #include "./skybox/skybox_entity.h"
 #include <time.h>
 #include "./camera/camera_entity.h"
 #include "./vendor/stb_image.h"
+#include "./vendor/imgui/imgui.h"
+#include "./gui/imgui_util.h"
 
 
 struct app_stats
@@ -26,7 +28,8 @@ struct app_stats
 	double last_fps_check_time = 0.0, cur_time = 0.0, last_frame_time = 0.0, delta_time = 0.0;
 	double cursor_last_x = SCREEN_WIDTH / 2.0f, cursor_last_y = SCREEN_HEIGHT / 2.0f;
 	int frame_count = 0;
-	bool is_first_mouse_move = true;
+	bool is_first_mouse_move = true, is_borderless = false, is_camera_movement_allowed = false;
+	int last_window_width, last_window_height, last_window_x_pos, last_window_y_pos;
 
 	void on_frame()
 	{
@@ -49,19 +52,16 @@ extern "C"
   __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 }
 
-//GLuint seafloor_vao; // just for testing
-bool is_camera_movement_allowed = false;
-
 // --- Load the shaders declared in glsl files in the project folder ---//
 //shader_prog default_shader("shaders/default.vert.glsl", "shaders/default.frag.glsl");
 shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
 shader_prog island_shader("shaders/island.vert.glsl", "shaders/island.frag.glsl");
 shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl");
 
+imgui_util gui;
 // water object
 water_entity water;
 island_entity island;
-//HillPlane* islandAsset;
 
 // skybox object
 skybox_entity skybox;
@@ -89,6 +89,7 @@ void update_window_title(GLFWwindow* window)
 	{
 		auto new_title = app_name + " " + std::to_string(statistics.frame_count) + "FPS";
         glfwSetWindowTitle(window, new_title.c_str());
+    	gui.fps = statistics.frame_count;
     	statistics.reset();
 	}
 }
@@ -100,6 +101,41 @@ void load_window_icon(GLFWwindow* window)
 	glfwSetWindowIcon(window, 1, images); 
 	stbi_image_free(images[0].pixels);
 }
+
+
+void toggle_borderless_mode(GLFWwindow* window)
+{
+	// if turning off borderless mode, set the window with last parameters
+	if(statistics.is_borderless)
+	{
+		glfwSetWindowMonitor(window, nullptr, statistics.last_window_x_pos, statistics.last_window_y_pos, statistics.last_window_width, statistics.last_window_height, 0);
+	}
+	// if turning on, save parameters and maximize the window
+    else
+    {
+	    glfwGetWindowSize(window, &statistics.last_window_width, &statistics.last_window_height);
+    	glfwGetWindowPos(window, &statistics.last_window_x_pos, &statistics.last_window_y_pos);
+    	auto* monitor = glfwGetPrimaryMonitor();
+		const auto* mode = glfwGetVideoMode(monitor);
+		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, 0);
+    }
+	glfwSwapInterval(1);
+	statistics.is_borderless = !statistics.is_borderless;
+}
+
+void toggle_mouse_mode(GLFWwindow* window)
+{
+	if(statistics.is_camera_movement_allowed)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+    else
+    {
+	    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+	statistics.is_camera_movement_allowed = !statistics.is_camera_movement_allowed;
+}
+
 
 /*
  * Could create some input util later
@@ -119,6 +155,15 @@ void processInput(GLFWwindow* window)
         camera.process_keyboard(RIGHT, statistics.delta_time);
 }
 
+// it's actually better for 1-time presses
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+        toggle_borderless_mode(window);
+	if (key == GLFW_KEY_M && action == GLFW_PRESS)
+        toggle_mouse_mode(window);
+}
+
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -136,24 +181,22 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
      statistics.cursor_last_x = xpos;
      statistics.cursor_last_y = ypos;
 
-	if(is_camera_movement_allowed)
+	if(statistics.is_camera_movement_allowed)
 	{
 		camera.process_mouse_movement(xoffset, yoffset);
 	}
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void window_size_callback(GLFWwindow* window, int w, int h)
 {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-    {
-	   is_camera_movement_allowed = true;
-	   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
-	 if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
-	 {
-		is_camera_movement_allowed = false;
-	    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	 }
+	camera.process_screen_resize(w, h);
+ 	water.on_screen_resize(w, h);
+}
+
+bool should_not_render(GLFWwindow* window)
+{
+	auto focused = glfwGetWindowAttrib(window, GLFW_FOCUSED);
+	return !focused && statistics.is_borderless;
 }
 
 // ---------------------------- Main -------------------------- //
@@ -176,10 +219,7 @@ int main(int argc, char *argv[]) {
     glewExperimental = GL_TRUE;
 
     auto status = glewInit();
-    if(status != GLEW_OK) {
-    	std::cout << "Error: " << glewGetErrorString(status) << std::endl;
-    }
-
+    if(status != GLEW_OK) std::cout << "Error: " << glewGetErrorString(status) << std::endl;
 	std::cout << "Renderer: " << glGetString (GL_RENDERER) << std::endl;
 	std::cout << "OpenGL version supported: " << glGetString (GL_VERSION) << std::endl;
 
@@ -187,8 +227,9 @@ int main(int argc, char *argv[]) {
 	load_window_icon(win);
 
     // inputs
+	glfwSetKeyCallback(win, key_callback);
 	glfwSetCursorPosCallback(win, mouse_callback);
-	glfwSetMouseButtonCallback(win, mouse_button_callback);
+	glfwSetWindowSizeCallback(win, window_size_callback);
 
 	// compile shaders
     //default_shader.use();
@@ -199,13 +240,7 @@ int main(int argc, char *argv[]) {
     //Init
     init_scene();
 
-	/*
-	 * Need to move this stuff somewhere at some point
-	 */
-    float near = 1.0f;
-    float far = 200.0f;
-
-    glm::mat4 perspective = glm::perspective(glm::radians(80.0f), static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT, near, far);
+    gui.init(&water, win);
 	glm::vec3 lightDirection (-0.0f, -1.0f, -0.0f);
 	
     //Send the view and projection matrices to all shaders.
@@ -215,32 +250,36 @@ int main(int argc, char *argv[]) {
     //default_shader.uniformVec3("lightDirection", lightDirection);
 
     water_shader.activate();
-    water_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     water_shader.uniformVec3("lightDirection", lightDirection);
+	water_shader.uniformVec2("frustum", camera.get_frustum());
     
     island_shader.activate();
-    island_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
     island_shader.uniformVec3("lightDirection", lightDirection);
-
-    skybox_shader.activate();
-    skybox_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    skybox_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
 
 	// OpenGL settings
 	glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+	glCullFace(GL_BACK);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	statistics.last_fps_check_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(win)) {
 
-        processInput(win);      //input processing will be called every frame
+    	// basically, if you alt-tab in borderless fullscreen, the FPS gets crazy (haven't found a reason yet)
+    	// to prevent this I added some artificial delay to frames in such cases
+    	if (should_not_render(win))
+    	{
+    		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    	}
     	
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    	processInput(win);      //input processing will be called every frame
+
+    	// get those once and reuse 
+    	auto projection = camera.get_projection_matrix();
+    	auto view = camera.get_view_matrix();
     	/*
     	 * 1) Enable clipping
     	 * 2) Save clipped land and sky to reflection and refraction buffers
@@ -255,22 +294,18 @@ int main(int argc, char *argv[]) {
     	 * Draw everything aside the water into reflection buffer   
     	 */
     	water.bind_reflection_buffer();
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     	auto distance = 2 * (camera.position.y - WATER_LEVEL);
         // move the camera under the water
     	camera.position.y -= distance;
         camera.invert_pitch();
     	
-        skybox.draw(perspective, camera.get_view_matrix());
+        skybox.draw(projection, camera.get_view_matrix());
+    	// only draw island parts located above the water
+    	island.draw(camera.get_view_matrix(), projection, glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL));
 
-    	island_shader.activate();
-        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 1.0, 0.0, -WATER_LEVEL)); // leave everything above water
-    	island.draw(statistics.delta_time);
-
-
-       // reverse the changes
+        // reverse the changes
 		camera.position.y += distance;
         camera.invert_pitch();
         
@@ -283,38 +318,28 @@ int main(int argc, char *argv[]) {
     	 */
 	
     	water.bind_refraction_buffer();
-    	
-        skybox.draw(perspective, camera.get_view_matrix());
-    	
-    	island_shader.activate();
-        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    	island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL)); // leave everything above water
-    	
-    	island.draw(statistics.delta_time);
-    	
+    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        skybox.draw(projection, view);
+
+    	// only draw island parts located below the water
+    	island.draw(view, projection, glm::vec4(0.0, -1.0, 0.0, WATER_LEVEL + 1));
         water.unbind_current_buffer();
+
     	
         /*
     	 * STEP 3
     	 * --------
     	 * Disable clipping, draw scene normally, reflection and refraction buffers will be used for water calculations
     	 */
-        	
-        skybox.draw(perspective, camera.get_view_matrix());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+        skybox.draw(projection, view);
+        island.draw(view, projection, glm::vec4(0.0, 0.0, 0.0, 0.0));
 
     	// finally draw the water
-    	water_shader.activate();
-    	water_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    	water_shader.uniformVec3("cameraPosition", camera.position);
-    	water.draw(statistics.delta_time);
+    	water.draw(statistics.delta_time, view, projection, camera.position);
 
-      
-        island_shader.activate();
-        island_shader.uniformVec4("clippingPlane",glm::vec4(0.0, 0.0, 0.0, 0.0)); // disable clipping
-        island_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-        island.draw(statistics.delta_time);
-
-
+    	// render gui menu window
+    	gui.render();
     	// update time stamps and stuff
         statistics.on_frame();
 
@@ -326,5 +351,7 @@ int main(int argc, char *argv[]) {
         glfwPollEvents();
     }
 
-    glfwTerminate();
+	gui.destroy();
+	glfwTerminate();
+	glfwDestroyWindow(win);
 }

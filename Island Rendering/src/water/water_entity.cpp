@@ -10,26 +10,39 @@ water_entity::~water_entity()
 void water_entity::init(shader_prog* shader)
 {
 	this->shader = shader;
-	this->tile_vao = create_textured_quad(glm::vec3(0.090, 0.772, 0.909), shader);
+	this->tile_vao = create_textured_quad(glm::vec3(base_color[0], base_color[1], base_color[2]), shader);
 	this->frame_buffers = new water_frame_buffers();
 	this->dudv_tex = load_texture(GL_TEXTURE_2D, GL_RGBA, "res/waterDUDV.png");
 	this->normal_map_tex = load_texture(GL_TEXTURE_2D, GL_RGBA, "res/waterNormalMap.png");
-	this->transform = new entity_transform(glm::vec3(0.0, WATER_LEVEL, 0.0), glm::vec3(4.0, 1.0, 10.0), glm::vec3(-90.0, 0, 0));
+
+	auto translation = glm::vec3(0.0f, WATER_LEVEL, 0.0f);
+	auto scale = glm::vec3(4.0f, 1.0f, 10.0f);
+	auto rotation = glm::vec3(-90.0f, 0.0f, 0.0f);
+	this->transform = new entity_transform(translation, scale, rotation);
+
 }
 
-void water_entity::draw(const float delta_time)
+void water_entity::draw(const float delta_time, const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::vec3& camera_position)
 {
 	// update water distortion factor
-	this->move_factor += this->WAVE_SPEED * delta_time;
+	this->move_factor += this->wave_speed * delta_time;
 	this->move_factor = std::fmod(this->move_factor, 1.0f);
 
 	// send uniforms to the shader
 	this->shader->activate();
 	this->shader->uniform1f("moveFactor", this->move_factor);
 	this->shader->uniform1f("waveStrength", this->wave_strength);
+	this->shader->uniform1f("depthEffectFactor", this->depth_effect_factor);
+	this->shader->uniform1f("shininess", this->shininess);
+	this->shader->uniform1f("reflectivityPower", this->reflectivity_power);
+	this->shader->uniformVec3("baseColor", glm::vec3(base_color[0], base_color[1], base_color[2]));
+
+	this->shader->uniformMatrix4fv("viewMatrix", view_matrix);
+    this->shader->uniformVec3("cameraPosition", camera_position);
+	this->shader->uniformMatrix4fv("projectionMatrix", projection_matrix);
+	
 	this->shader->uniformTex2D("reflectionTexture", this->frame_buffers->reflection_texture);
-	// add this stuff when there is land
-	//this->shader->uniformTex2D("depthTexture", this->frame_buffers->refraction_depth_texture);
+	this->shader->uniformTex2D("depthTexture", this->frame_buffers->depth_texture);
 	this->shader->uniformTex2D("refractionTexture", this->frame_buffers->refraction_texture);
 	this->shader->uniformTex2D("dudvTexture", this->dudv_tex);
 	this->shader->uniformTex2D("normalMapTexture", this->normal_map_tex);
@@ -56,4 +69,9 @@ void water_entity::bind_refraction_buffer()
 void water_entity::unbind_current_buffer()
 {
 	this->frame_buffers->unbind_current_fbo();
+}
+
+void water_entity::on_screen_resize(int w, int h)
+{
+	this->frame_buffers->on_screen_resize(w, h);
 }
