@@ -15,6 +15,8 @@ public:
 private:
 	GLuint tile_vao;
 	shader_prog* shader;
+	GLuint sand_tex;
+	GLuint hills_tex;
 	int mapSize = 50;
 	int size;
 
