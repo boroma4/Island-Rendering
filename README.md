@@ -12,3 +12,9 @@ Launching:
 For a simple manual, refer to "Help" section in the menu, while running the program.
 
 **NB!** Only Windows is supported.
+
+Results of running on GPUs from different manufacturers:
+
+* NVIDIA: works well
+* Intel: could be problematic
+* AMD: not tested
