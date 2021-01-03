@@ -10,3 +10,5 @@ Launching:
 *    Start the program
 
 For a simple manual, refer to "Help" section in the menu, while running the program.
+
+**NB!** Only Windows is supported.
