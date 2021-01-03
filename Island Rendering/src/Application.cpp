@@ -58,6 +58,9 @@ shader_prog water_shader("shaders/water.vert.glsl", "shaders/water.frag.glsl");
 shader_prog island_shader("shaders/island.vert.glsl", "shaders/island.frag.glsl");
 shader_prog skybox_shader("shaders/skybox.vert.glsl", "shaders/skybox.frag.glsl");
 
+int shader_prog::textureCounter = 0;
+
+
 imgui_util gui;
 // water object
 water_entity water;

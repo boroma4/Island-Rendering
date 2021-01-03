@@ -24,7 +24,7 @@ private:
     GLuint vertex_shader, fragment_shader, prog;
     std::string v_source, f_source;
 	std::unordered_map<std::string, GLuint> texture_map;
-	int textureCounter;
+	static int textureCounter;
 public:
     shader_prog(const char* vertex_shader_filename, const char* fragment_shader_filename);
     void use();
