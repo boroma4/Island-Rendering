@@ -9,7 +9,7 @@ void island_entity::init(shader_prog* shader)
 {
 	float w = 100.0f;
 	float l = 100.0f;
-	float h = 10.0f;
+	float h = 30.0f;
 
 	this->shader = shader;
 	this->sand_tex = load_texture(GL_TEXTURE_2D, GL_RGBA, "res/sand.jpg");
@@ -17,8 +17,8 @@ void island_entity::init(shader_prog* shader)
 	size = 256;
 	time_t ticks;
 	time(&ticks);
-	heightMap = new island_generator(size, 180, 7, 20, 10, 30, 150, false, (unsigned int)ticks);
-	position = glm::vec3(0.0, WATER_LEVEL - 2, 0.0);
+	heightMap = new island_generator(size, 180, 7, 20, 10, 40, 150, true, (unsigned int)ticks);
+	position = glm::vec3(0.0, WATER_LEVEL - 7, 0.0);
 	rotation = glm::vec3(0.0, 1.0, 0.0);
 	scaling = glm::vec3(w, h, l);
 

@@ -14,8 +14,8 @@ out vec4 frag_color;
 void main(void) {
 
 
-    float upperLimit = 0.50;
-	float lowerLimit = 0.30;
+    float upperLimit = 0.35;
+	float lowerLimit = 0.20;
     float alpha = clamp(interpolatedPosition.y - lowerLimit, 0, upperLimit - lowerLimit) / (upperLimit - lowerLimit);
 
     vec3 texColor = mix(texture2D(sandTexture, interpolatedPosition.xz), texture2D(hillsTexture, interpolatedPosition.xz), alpha).xyz;
