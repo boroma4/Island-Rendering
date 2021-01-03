@@ -1,9 +1,14 @@
 #include "imgui_util.h"
 
-void imgui_util::init(water_entity* water, GLFWwindow* window)
+#include <GLFW/glfw3.h>
+
+void imgui_util::init(water_entity* water, island_entity* island, camera_entity* camera, GLFWwindow* window)
 {
 	this->fps = 0;
 	this->water = water;
+	this->island = island;
+	this->camera = camera;
+	this->window = window;
 	//Setup IMGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -26,9 +31,23 @@ void imgui_util::render()
 		ImGui::SliderFloat("Wave strength", &this->water->wave_strength, 0.0f, 0.5f);
 		ImGui::SliderFloat("Wave speed", &this->water->wave_speed, 0.0f, 0.2f);
 		ImGui::SliderFloat("Depth effect coef", &this->water->depth_effect_factor, 0.02f, 5.0f);
-		ImGui::SliderFloat("Shininess", &this->water->shininess, 0.0f, 200.0f);
+		ImGui::SliderFloat("Shininess", &this->water->shininess, 0.0f, 50.0f);
 		ImGui::SliderFloat("Reflectivity", &this->water->reflectivity_power, 0.5f, 5.0f);
 		ImGui::ColorEdit3("Base color", this->water->base_color);
+	}
+	
+	if (ImGui::CollapsingHeader("Island"))
+	{
+		if (ImGui::Button("Regenerate"))
+		{
+			this->island->regenerate();
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		ImGui::SliderFloat("Render distance", &this->camera->far, 100.0f, 500.0f);
+		ImGui::SliderFloat("FOV", &this->camera->projection_angle, 50.0f, 130.0f);
 	}
 
 	if (ImGui::CollapsingHeader("Help"))
@@ -41,6 +60,12 @@ void imgui_util::render()
 
 	auto fps_text = "FPS: " + std::to_string(this->fps);
 	ImGui::Text(fps_text.c_str());
+
+
+	if (ImGui::Button("  Exit  "))
+	{
+		glfwSetWindowShouldClose(this->window, 1);
+	}
 
 	ImGui::End();
 

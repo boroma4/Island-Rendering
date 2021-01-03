@@ -10,6 +10,7 @@ class island_entity
 public:
 	void init(shader_prog* shader);
 	void draw(const glm::mat4& view_matrix, const glm::mat4& projection_matrix, const glm::vec4& clipping_plane);
+	void regenerate();
 	entity_transform* transform;
 
 private:

@@ -70,7 +70,7 @@ island_entity island;
 skybox_entity skybox;
 
 // camera
-camera_entity camera(glm::vec3(30.0f, 30.0f, 30.0f));
+camera_entity camera(glm::vec3(80.0f, 40.0f, 100.0f));
 
 // for window title
 std::string app_name = "Island Rendering";
@@ -85,13 +85,11 @@ void init_scene() {
     island.init(&island_shader);
 }
 
-void update_window_title(GLFWwindow* window)
+void update_fps_stats()
 {
 	// if a second has passed, update FPS in the window title    	
     if (statistics.cur_time - statistics.last_fps_check_time >= 1.0)
 	{
-		auto new_title = app_name + " " + std::to_string(statistics.frame_count) + "FPS";
-        glfwSetWindowTitle(window, new_title.c_str());
     	gui.fps = statistics.frame_count;
     	statistics.reset();
 	}
@@ -146,8 +144,6 @@ void toggle_mouse_mode(GLFWwindow* window)
 
 void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS )
-        glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.process_keyboard(FORWARD, statistics.delta_time);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -235,7 +231,6 @@ int main(int argc, char *argv[]) {
 	glfwSetWindowSizeCallback(win, window_size_callback);
 
 	// compile shaders
-    //default_shader.use();
     water_shader.use();
 	skybox_shader.use();
     island_shader.use();
@@ -243,14 +238,8 @@ int main(int argc, char *argv[]) {
     //Init
     init_scene();
 
-    gui.init(&water, win);
+    gui.init(&water, &island, &camera, win);
 	glm::vec3 lightDirection (-0.0f, -1.0f, -0.0f);
-	
-    //Send the view and projection matrices to all shaders.
-    //default_shader.activate();
-    //default_shader.uniformMatrix4fv("projectionMatrix", perspective);
-    //default_shader.uniformMatrix4fv("viewMatrix", camera.get_view_matrix());
-    //default_shader.uniformVec3("lightDirection", lightDirection);
 
     water_shader.activate();
     water_shader.uniformVec3("lightDirection", lightDirection);
@@ -346,8 +335,8 @@ int main(int argc, char *argv[]) {
     	// update time stamps and stuff
         statistics.on_frame();
 
-    	// set the fps in the title
-    	update_window_title(win);
+    	// set the fps in the GUI
+    	update_fps_stats();
 
     	// draw and check input events
     	glfwSwapBuffers(win);

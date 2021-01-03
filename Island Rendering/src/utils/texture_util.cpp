@@ -58,7 +58,7 @@ GLuint load_texture(GLenum target, GLint internalFormat, const char* filename) {
                  0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
     glGenerateMipmap(target);
 
-    printf("Loaded image with format: %d, and bytes per pixel: %d\n",  ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_BPP));
+    //printf("Loaded image with format: %d, and bytes per pixel: %d\n",  ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_BPP));
 
     error = ilGetError();
     if (error != IL_NO_ERROR) {
