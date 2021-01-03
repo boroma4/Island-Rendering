@@ -17,8 +17,8 @@ enum Camera_Movement {
 };
 
 // Default camera values
-const float YAW         = -90.0f;
-const float PITCH       =  0.0f;
+const float YAW         = -120.0f;
+const float PITCH       =  -30.0f;
 const float SPEED       =  25.0f;
 const float SENSITIVITY =  0.1f;
 
@@ -36,8 +36,6 @@ private:
     float pitch;
 	// projection
 	float near;
-	float far;
-	float projection_angle;
 	float projection_width;
 	float projection_height;
 	
@@ -47,11 +45,13 @@ public:
     // camera options
     float movement_speed;
     float mouse_sensitivity;
+	float far;
+	float projection_angle;
 
     // constructor with vectors
     camera_entity(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
-	:position(pos), front(glm::vec3(0.0f, 0.0f, -1.0f)), world_up(up), yaw(yaw), pitch(pitch),
-	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), near(1.0f), far(200.0f), projection_angle(80.0f),
+	:position(pos), front(glm::vec3(0.0f, 1.0f, -1.0f)), world_up(up), yaw(yaw), pitch(pitch),
+	movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), near(1.0f), far(300.0f), projection_angle(80.0f),
 	projection_width(SCREEN_WIDTH), projection_height(SCREEN_HEIGHT)
     {
         update_camera_vectors();

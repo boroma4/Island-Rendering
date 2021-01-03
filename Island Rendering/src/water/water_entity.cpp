@@ -16,7 +16,7 @@ void water_entity::init(shader_prog* shader)
 	this->normal_map_tex = load_texture(GL_TEXTURE_2D, GL_RGBA, "res/waterNormalMap.png");
 
 	auto translation = glm::vec3(0.0f, WATER_LEVEL, 0.0f);
-	auto scale = glm::vec3(4.0f, 1.0f, 10.0f);
+	auto scale = glm::vec3(12.0f, 1.0f, 12.0f);
 	auto rotation = glm::vec3(-90.0f, 0.0f, 0.0f);
 	this->transform = new entity_transform(translation, scale, rotation);
 

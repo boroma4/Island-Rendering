@@ -7,8 +7,8 @@
 
 void island_entity::init(shader_prog* shader)
 {
-	float w = 100.0f;
-	float l = 100.0f;
+	float w = 200.0f;
+	float l = 200.0f;
 	float h = 30.0f;
 
 	this->shader = shader;
@@ -45,4 +45,14 @@ void island_entity::draw(const glm::mat4& view_matrix, const glm::mat4& projecti
 	
 	glBindVertexArray(this->tile_vao);
 	glDrawElements(GL_TRIANGLE_STRIP, (size - 1) * (size * 2) + (size - 2) * 2, GL_UNSIGNED_INT, NULL);
+}
+
+void island_entity::regenerate()
+{
+	time_t ticks;
+	time(&ticks);
+	delete heightMap;
+	heightMap = new island_generator(size, 180, 7, 20, 10, 40, 150, true, (unsigned int)ticks);
+	heightMap->GenerateHeightmap();
+	tile_vao = heightMap->getVao(1.0, 1.0);
 }
