@@ -12,7 +12,6 @@ layout(location = 2) in vec3 normal;
 
 out vec3 interpolatedNormal;
 out vec3 interpolatedPosition;
-out vec3 interpolatedColor;
 
 void main(void) {
     // probably would be better to send as uniform
@@ -25,8 +24,8 @@ void main(void) {
     gl_ClipDistance[0] = clipDist; // to disable drawing of some vertices if clipping is enabled (needed for water)
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
-    interpolatedNormal = normalize(normalMatrix * normal);
-    interpolatedPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    interpolatedColor = color;
-    //interpolatedColor = vec3(0, 1, 0);
+    //interpolatedNormal = normalize(normalMatrix * normal);
+    interpolatedNormal = normal;
+    //interpolatedPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
+    interpolatedPosition = position;  
 }

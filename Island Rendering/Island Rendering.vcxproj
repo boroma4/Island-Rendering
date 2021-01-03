@@ -177,6 +177,8 @@ xcopy /y /d  "$(ProjectDir)res\" "$(SolutionDir)\bin\$(Platform)\$(Configuration
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\Portfolio\Graphics\Procedural Islands\ProceduralIslands\Data\sand.jpg" />
+    <Image Include="..\..\Portfolio\Graphics\Procedural Islands\ProceduralIslands\Data\Twisted Hills2.jpg" />
     <Image Include="res\waterDUDV.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

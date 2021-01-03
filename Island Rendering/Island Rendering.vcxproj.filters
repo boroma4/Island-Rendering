@@ -153,5 +153,11 @@
     <Image Include="res\waterDUDV.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\Portfolio\Graphics\Procedural Islands\ProceduralIslands\Data\sand.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Portfolio\Graphics\Procedural Islands\ProceduralIslands\Data\Twisted Hills2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
