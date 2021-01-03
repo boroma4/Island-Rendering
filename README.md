@@ -18,3 +18,5 @@ Results of running on GPUs from different manufacturers:
 * NVIDIA: works well
 * Intel: could be problematic
 * AMD: not tested
+
+![Scr1](https://i.imgur.com/Tso1zYV.png)
